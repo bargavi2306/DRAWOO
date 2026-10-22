@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useCallback, useMemo, createContext, useContext } from 'react';
 import styles from './Toast.module.css';
 
 const ToastContext = createContext(null);
@@ -6,7 +6,11 @@ const ToastContext = createContext(null);
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
 
-  const addToast = (message, icon = 'ℹ️', type = 'info', duration = 3000) => {
+  const removeToast = useCallback((id) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
+  const addToast = useCallback((message, icon = 'ℹ️', type = 'info', duration = 3000) => {
     const id = Date.now() + Math.random();
     setToasts((prev) => {
       const updated = [...prev, { id, message, icon, type }];
@@ -17,14 +21,15 @@ export function ToastProvider({ children }) {
     setTimeout(() => {
       removeToast(id);
     }, duration);
-  };
+  }, [removeToast]);
 
-  const removeToast = (id) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
-  };
+  const contextValue = useMemo(() => ({
+    addToast,
+    removeToast
+  }), [addToast, removeToast]);
 
   return (
-    <ToastContext.Provider value={{ addToast, removeToast }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
       <div className={styles.toastStack}>
         {toasts.map((toast) => (

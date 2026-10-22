@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DrawerWordSelect from './DrawerWordSelect';
 import GuesserWaiting from './GuesserWaiting';
 import DrawerGameplay from './DrawerGameplay';
@@ -25,6 +25,13 @@ export default function GamePage({
   const [timerSeconds, setTimerSeconds] = useState(() => roomState?.gameState?.timerSeconds || 20);
   const [messages, setMessages] = useState([]);
 
+  const onGameOverRef = useRef(onGameOver);
+  useEffect(() => {
+    onGameOverRef.current = onGameOver;
+  }, [onGameOver]);
+
+  const lastWordChoicePromptRef = useRef(null);
+
   useEffect(() => {
     // 1. Room State Updates
     const unsubRoom = socketService.onRoomStateUpdated((data) => {
@@ -35,8 +42,11 @@ export default function GamePage({
       if (data?.gameState?.timerSeconds !== undefined) {
         setTimerSeconds(data.gameState.timerSeconds);
       }
+      if (data?.gameState?.status && data.gameState.status !== 'word_selecting') {
+        lastWordChoicePromptRef.current = null;
+      }
       if (data?.gameState?.status === 'game_over') {
-        if (onGameOver) onGameOver(data);
+        onGameOverRef.current?.(data);
       }
     });
 
@@ -44,7 +54,16 @@ export default function GamePage({
     const unsubChoices = socketService.onDrawerChooseWord(({ choices, timeoutSeconds }) => {
       setWordChoices(choices);
       setTimerSeconds(timeoutSeconds || 20);
-      addToast('🎨 Your turn to draw! Pick a word choice.', '✨', 'info');
+
+      // Single-notification guard per word-selection phase
+      const choiceKey = Array.isArray(choices)
+        ? choices.map((c) => (c && typeof c === 'object' ? c.word : String(c))).join('|')
+        : null;
+
+      if (choiceKey && lastWordChoicePromptRef.current !== choiceKey) {
+        lastWordChoicePromptRef.current = choiceKey;
+        addToast('🎨 Your turn to draw! Pick a word choice.', '✨', 'info');
+      }
     });
 
     // 3. Timer Ticks
@@ -79,14 +98,14 @@ export default function GamePage({
       unsubChatEvent();
       unsubPrivateGuess();
     };
-  }, [socketId, sessionId, addToast, onGameOver]);
+  }, [socketId, sessionId, addToast]);
 
   // Immediate transition to Game Over when game ends
   useEffect(() => {
     if (roomState?.gameState?.status === 'game_over') {
-      if (onGameOver) onGameOver(roomState);
+      onGameOverRef.current?.(roomState);
     }
-  }, [roomState, onGameOver]);
+  }, [roomState]);
 
   // Derived state from server
   const gameState = roomState?.gameState || {

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import Home from './pages/Home';
 import PrivateLobby from './pages/PrivateLobby';
 import GamePage from './pages/Game';
@@ -57,20 +57,22 @@ function MainAppContent() {
     return () => unsub();
   }, []);
 
-  const handleSaveUser = (identity) => {
-    const fullUser = {
-      ...identity,
-      id: identity?.id || currentUser?.id || socketService.getSessionId()
-    };
-    setCurrentUser(fullUser);
-    try {
-      sessionStorage.setItem('drawo_user_identity', JSON.stringify(fullUser));
-    } catch (e) {
-      console.warn('Could not access sessionStorage', e);
-    }
-  };
+  const handleSaveUser = useCallback((identity) => {
+    setCurrentUser((prev) => {
+      const fullUser = {
+        ...identity,
+        id: identity?.id || prev?.id || socketService.getSessionId()
+      };
+      try {
+        sessionStorage.setItem('drawo_user_identity', JSON.stringify(fullUser));
+      } catch (e) {
+        console.warn('Could not access sessionStorage', e);
+      }
+      return fullUser;
+    });
+  }, []);
 
-  const handleCreatePrivate = async () => {
+  const handleCreatePrivate = useCallback(async () => {
     const nick = currentUser?.nickname || 'Host';
     const av = currentUser?.avatarId ?? 0;
     const res = await socketService.createPrivateRoom(nick, av);
@@ -81,20 +83,33 @@ function MainAppContent() {
       }
     }
     setCurrentScreen('private_lobby');
-  };
+  }, [currentUser]);
 
-  const handleJoinRoom = (code, initialRoomState = null) => {
+  const handleJoinRoom = useCallback((code, initialRoomState = null) => {
     setActiveRoomCode(code);
     if (initialRoomState) {
       setRoomData(initialRoomState);
     }
     setCurrentScreen('private_lobby');
-  };
+  }, []);
 
-  const handlePlayAgain = () => {
+  const handlePlayAgain = useCallback(() => {
     addToast('Returning to Private Lobby with room context…', '🏠', 'info');
     setCurrentScreen('private_lobby');
-  };
+  }, [addToast]);
+
+  const handleBackToHome = useCallback(() => {
+    setCurrentScreen('home');
+  }, []);
+
+  const handleStartGame = useCallback(() => {
+    setCurrentScreen('game');
+  }, []);
+
+  const handleGameOver = useCallback((data) => {
+    if (data) setFinalRoomData(data);
+    setCurrentScreen('game_over');
+  }, []);
 
   // If ?dev=true is set in the URL, render the detached prototype shell
   if (isDevMode) {
@@ -125,8 +140,8 @@ function MainAppContent() {
           roomCode={activeRoomCode}
           currentUser={currentUser}
           initialData={roomData}
-          onBackToHome={() => setCurrentScreen('home')}
-          onStartGame={() => setCurrentScreen('game')}
+          onBackToHome={handleBackToHome}
+          onStartGame={handleStartGame}
         />
       )}
 
@@ -134,11 +149,8 @@ function MainAppContent() {
         <GamePage
           currentUser={currentUser}
           initialRoomState={roomData}
-          onBackToHome={() => setCurrentScreen('home')}
-          onGameOver={(data) => {
-            if (data) setFinalRoomData(data);
-            setCurrentScreen('game_over');
-          }}
+          onBackToHome={handleBackToHome}
+          onGameOver={handleGameOver}
         />
       )}
 
@@ -151,7 +163,7 @@ function MainAppContent() {
           winner={finalRoomData?.gameState?.winner}
           winnerMessage={finalRoomData?.gameState?.winnerMessage}
           onPlayAgain={handlePlayAgain}
-          onBackToHome={() => setCurrentScreen('home')}
+          onBackToHome={handleBackToHome}
         />
       )}
     </div>
