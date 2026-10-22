@@ -62,7 +62,7 @@ See `.env.example` for reference templates:
 1. **Deploy to Platform**: Connect the repository to your hosting provider.
 2. **Build & Start Commands**:
    * Build Command: `npm install`
-   * Start Command: `node server/server.js` (or `npm run server`)
+   * Start Command: `node backend/server.js` (or `npm run server`)
 3. **Set Environment Variables**:
    * `NODE_ENV=production`
    * `PORT=4000` (or leave default assigned by host)
