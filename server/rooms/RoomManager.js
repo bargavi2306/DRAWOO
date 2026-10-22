@@ -30,7 +30,7 @@ export class RoomManager {
    */
   createPrivateRoom(hostPlayer, rules = {}) {
     const code = this.generateCode();
-    const capacity = Math.min(15, Math.max(2, Number(rules.maxCapacity) || 8));
+    const capacity = Math.min(25, Math.max(2, Number(rules.maxCapacity) || 8));
 
     const room = new Room({
       code,

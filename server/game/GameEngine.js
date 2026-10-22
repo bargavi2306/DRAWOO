@@ -64,17 +64,7 @@ export class GameEngine {
     this.isTransitioning = false;
 
     // Check remaining connected human players: at least 2 are required to play
-    const humanPlayers = Array.from(this.room.players.values()).filter(
-      p => p.isConnected !== false
-    );
-    if (humanPlayers.length <= 1) {
-      if (humanPlayers.length === 1) {
-        this.endGame('single_human_remains', humanPlayers[0]);
-      } else {
-        this.endGame('no_players');
-      }
-      return;
-    }
+    if (this.checkSingleHumanRemains()) return;
 
     // Check if the current round needs advancing or game is complete
     if (this.turnManager.isRoundComplete()) {
@@ -177,17 +167,7 @@ export class GameEngine {
       return;
     }
 
-    const humanPlayers = Array.from(this.room.players.values()).filter(
-      p => p.isConnected !== false
-    );
-    if (humanPlayers.length <= 1) {
-      if (humanPlayers.length === 1) {
-        this.endGame('single_human_remains', humanPlayers[0]);
-      } else {
-        this.endGame('no_players');
-      }
-      return;
-    }
+    if (this.checkSingleHumanRemains()) return;
 
     this.clearAllTimers();
 
@@ -293,17 +273,7 @@ export class GameEngine {
       return; // Turn already ended or game over! Guard against duplicate calls
     }
 
-    const humanPlayers = Array.from(this.room.players.values()).filter(
-      p => p.isConnected !== false
-    );
-    if (humanPlayers.length <= 1) {
-      if (humanPlayers.length === 1) {
-        this.endGame('single_human_remains', humanPlayers[0]);
-      } else {
-        this.endGame('no_players');
-      }
-      return;
-    }
+    if (this.checkSingleHumanRemains()) return;
 
     this.clearAllTimers();
 
@@ -344,17 +314,7 @@ export class GameEngine {
   showTurnResults() {
     if (this.room.gameState.status !== 'word_reveal') return;
 
-    const humanPlayers = Array.from(this.room.players.values()).filter(
-      p => p.isConnected !== false
-    );
-    if (humanPlayers.length <= 1) {
-      if (humanPlayers.length === 1) {
-        this.endGame('single_human_remains', humanPlayers[0]);
-      } else {
-        this.endGame('no_players');
-      }
-      return;
-    }
+    if (this.checkSingleHumanRemains()) return;
 
     this.room.gameState.status = 'turn_results';
     this.room.gameState.isFinalTurn = this.turnManager.isGameComplete();
@@ -372,17 +332,7 @@ export class GameEngine {
   advanceAfterTurnResults() {
     if (this.room.gameState.status !== 'turn_results') return;
 
-    const humanPlayers = Array.from(this.room.players.values()).filter(
-      p => p.isConnected !== false
-    );
-    if (humanPlayers.length <= 1) {
-      if (humanPlayers.length === 1) {
-        this.endGame('single_human_remains', humanPlayers[0]);
-      } else {
-        this.endGame('no_players');
-      }
-      return;
-    }
+    if (this.checkSingleHumanRemains()) return;
 
     if (this.turnManager.isGameComplete()) {
       this.endGame('rounds_completed');
@@ -526,25 +476,61 @@ export class GameEngine {
   }
 
   /**
-   * Broadcast state to all players with role-based secrecy
+   * Get all connected human players
+   */
+  getConnectedHumanPlayers() {
+    return Array.from(this.room.players.values()).filter(
+      p => p.isConnected !== false
+    );
+  }
+
+  /**
+   * Check if single human player remains and trigger win
+   */
+  checkSingleHumanRemains() {
+    const humanPlayers = this.getConnectedHumanPlayers();
+    if (humanPlayers.length <= 1) {
+      if (humanPlayers.length === 1) {
+        this.endGame('single_human_remains', humanPlayers[0]);
+      } else {
+        this.endGame('no_players');
+      }
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Build client-facing sanitized room payload
+   */
+  buildRoomPayload(isDrawer = false, playersList = null) {
+    return {
+      code: this.room.code,
+      type: 'private',
+      hostId: this.room.hostId,
+      capacity: this.room.capacity,
+      rules: this.room.rules,
+      gameState: this.getSanitizedGameState(isDrawer),
+      players: playersList || this.getPlayersList()
+    };
+  }
+
+  /**
+   * Broadcast state to all players with role-based secrecy (pre-calculated for 15+ player scale)
    */
   broadcastRoomState() {
+    if (!this.io) return;
     const playersList = this.getPlayersList();
+    const currentDrawerId = this.room.gameState.currentDrawerId;
+
+    // Fast-path: pre-build drawer and guesser payloads once instead of in a loop
+    const guesserPayload = this.buildRoomPayload(false, playersList);
+    const drawerPayload = currentDrawerId ? this.buildRoomPayload(true, playersList) : guesserPayload;
 
     for (const player of this.room.players.values()) {
-      if (player.socketId && this.io) {
-        const isDrawer = player.id === this.room.gameState.currentDrawerId;
-        const sanitizedState = this.getSanitizedGameState(isDrawer);
-
-        this.io.to(player.socketId).emit('room_state_updated', {
-          code: this.room.code,
-          type: 'private',
-          hostId: this.room.hostId,
-          capacity: this.room.capacity,
-          rules: this.room.rules,
-          gameState: sanitizedState,
-          players: playersList
-        });
+      if (player.socketId && player.isConnected !== false) {
+        const payload = (player.id === currentDrawerId) ? drawerPayload : guesserPayload;
+        this.io.to(player.socketId).emit('room_state_updated', payload);
       }
     }
   }

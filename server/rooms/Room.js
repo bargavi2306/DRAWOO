@@ -26,7 +26,7 @@ export class Room {
       rounds: initialRounds,
       turnTime: Number(rules.turnTime) || 90,
       difficulty: rules.difficulty || 'mixed',
-      maxCapacity: Math.min(15, Math.max(2, Number(rules.maxCapacity) || this.capacity)),
+      maxCapacity: Math.min(25, Math.max(2, Number(rules.maxCapacity) || this.capacity)),
       customWords: Boolean(rules.customWords),
       customWordsList: Array.isArray(rules.customWordsList) ? rules.customWordsList : [],
       hints: rules.hints !== undefined ? rules.hints : true,
@@ -124,7 +124,7 @@ export class Room {
     if (newRules.turnTime !== undefined) this.rules.turnTime = Number(newRules.turnTime);
     if (newRules.difficulty !== undefined) this.rules.difficulty = newRules.difficulty;
     if (newRules.maxCapacity !== undefined) {
-      const cap = Math.min(15, Math.max(2, Number(newRules.maxCapacity)));
+      const cap = Math.min(25, Math.max(2, Number(newRules.maxCapacity)));
       this.rules.maxCapacity = cap;
       this.capacity = cap;
     }

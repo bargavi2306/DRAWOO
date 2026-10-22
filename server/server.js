@@ -42,13 +42,14 @@ app.use(cors({
 
 app.use(express.json());
 
-// Initialize Socket.IO server
+// Initialize Socket.IO server with high-concurrency buffer limits
 const io = new Server(httpServer, {
   cors: {
     origin: corsOrigin,
     methods: ['GET', 'POST'],
     credentials: true
   },
+  maxHttpBufferSize: 1e6, // 1MB payload ceiling prevents memory overload
   pingTimeout: 20000,
   pingInterval: 10000
 });
@@ -106,3 +107,13 @@ const shutdown = (signal) => {
 
 process.on('SIGTERM', () => shutdown('SIGTERM'));
 process.on('SIGINT', () => shutdown('SIGINT'));
+
+// Process-level crash prevention under heavy multiplayer load
+process.on('uncaughtException', (err) => {
+  console.error('💥 [CRASH PREVENTION] Uncaught exception safely captured:', err?.message || err);
+  if (err?.stack) console.error(err.stack);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('💥 [CRASH PREVENTION] Unhandled promise rejection safely captured:', reason);
+});

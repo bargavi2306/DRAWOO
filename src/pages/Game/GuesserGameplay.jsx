@@ -7,9 +7,9 @@ import WordDisplay from '../../components/WordDisplay';
 import Canvas from '../../components/Canvas';
 import Chat from '../../components/Chat';
 import Leaderboard from '../../components/Leaderboard';
-import LeaveModal from '../../components/LeaveModal';
 import { socketService } from '../../services/socket';
 import { useToast } from '../../components/Toast';
+import { isCurrentUser } from '../../utils/gameHelpers';
 import styles from './GuesserGameplay.module.css';
 
 export default function GuesserGameplay({
@@ -28,8 +28,6 @@ export default function GuesserGameplay({
 }) {
   const { addToast } = useToast();
   const canvasRef = useRef(null);
-
-  const [leaveModalOpen, setLeaveModalOpen] = useState(false);
 
   // Subscribe to remote socket drawing strokes & clear commands
   useEffect(() => {
@@ -53,7 +51,7 @@ export default function GuesserGameplay({
 
   const sessionId = socketService.getSessionId();
   const socketId = socketService.getSocketId();
-  const me = initialPlayers.find(p => p.id === currentUserId || p.id === sessionId || p.socketId === socketId || p.isYou);
+  const me = initialPlayers.find(p => isCurrentUser(p, currentUserId, socketId, sessionId));
   const isGuessed = Boolean(me?.isGuessed);
 
   return (
@@ -73,7 +71,7 @@ export default function GuesserGameplay({
           <Timer seconds={timerSeconds} urgentThreshold={10} />
           <button
             className={styles.leaveBtn}
-            onClick={() => setLeaveModalOpen(true)}
+            onClick={onLeaveGame}
             title="Leave game"
           >
             🚪
@@ -120,16 +118,6 @@ export default function GuesserGameplay({
           />
         </aside>
       </main>
-
-      {/* Leave Confirmation Modal */}
-      <LeaveModal
-        isOpen={leaveModalOpen}
-        onStay={() => setLeaveModalOpen(false)}
-        onLeave={() => {
-          setLeaveModalOpen(false);
-          if (onLeaveGame) onLeaveGame();
-        }}
-      />
     </div>
   );
 }

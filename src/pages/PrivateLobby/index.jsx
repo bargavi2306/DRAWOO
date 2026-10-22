@@ -6,6 +6,7 @@ import GameRules from '../../components/GameRules';
 import EditRulesModal from './EditRulesModal';
 import { socketService } from '../../services/socket';
 import { useToast } from '../../components/Toast';
+import { isCurrentUser } from '../../utils/gameHelpers';
 import styles from './PrivateLobby.module.css';
 
 export default function PrivateLobby({
@@ -71,13 +72,7 @@ export default function PrivateLobby({
       ];
 
   const hostId = roomData?.hostId;
-  const isHost = Boolean(
-    hostId && (
-      hostId === socketId ||
-      hostId === sessionId ||
-      (currentUser?.id && hostId === currentUser.id)
-    )
-  );
+  const isHost = Boolean(hostId && isCurrentUser({ id: hostId }, currentUser?.id, socketId, sessionId));
 
   const handleCopyCode = () => {
     navigator.clipboard?.writeText(roomCode);

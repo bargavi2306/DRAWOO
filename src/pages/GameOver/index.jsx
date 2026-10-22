@@ -4,6 +4,7 @@ import ClayCard from '../../components/ClayCard';
 import ClayButton from '../../components/ClayButton';
 import Avatar from '../../components/Avatar';
 import ConfettiBurst from './ConfettiBurst';
+import { formatScore, isCurrentUser } from '../../utils/gameHelpers';
 import { MOCK_GAMEOVER_RESULTS } from '../../mocks/gameOver.mock';
 import styles from './GameOver.module.css';
 
@@ -44,14 +45,7 @@ export default function GameOverPage({
     winner = sorted[0] || null;
   }
 
-  const isCurrentPlayer = (player) => {
-    if (!player) return false;
-    if (player.isYou) return true;
-    if (currentUserId && (player.id === currentUserId || player.socketId === currentUserId)) {
-      return true;
-    }
-    return false;
-  };
+  const isCurrentPlayer = (player) => isCurrentUser(player, currentUserId);
 
   // Find current user rank & status
   const userIndex = sorted.findIndex(isCurrentPlayer);
@@ -222,7 +216,7 @@ export default function GameOverPage({
                       </div>
 
                       <span className={styles.lowerScore}>
-                        {`${score.toLocaleString()} pts`}
+                        {formatScore(score)}
                       </span>
                     </div>
                   );
@@ -319,7 +313,7 @@ function PodiumColumn({ player, rank, isCenter = false, isCurrentPlayer }) {
       {isYou && <span className={styles.podiumYouPill}>You</span>}
 
       <span className={styles.podiumScore}>
-        {`${score.toLocaleString()} pts`}
+        {formatScore(score)}
       </span>
 
       <div className={`${styles.pedestal} ${pedestalClass}`}>

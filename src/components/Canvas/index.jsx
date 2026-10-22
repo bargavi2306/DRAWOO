@@ -112,8 +112,18 @@ const Canvas = forwardRef(function Canvas({
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     const pos = getPos(e);
+    // Sub-pixel rounding for clean payloads
+    pos.x = Math.round(pos.x * 10) / 10;
+    pos.y = Math.round(pos.y * 10) / 10;
 
     const prevPos = currentPointsRef.current[currentPointsRef.current.length - 1] || pos;
+    const dx = pos.x - prevPos.x;
+    const dy = pos.y - prevPos.y;
+    // Skip duplicate/redundant points within 1.5px to optimize network bandwidth for 15+ players
+    if (currentPointsRef.current.length > 1 && (dx * dx + dy * dy) < 2.25) {
+      return;
+    }
+
     currentPointsRef.current.push(pos);
 
     ctx.beginPath();

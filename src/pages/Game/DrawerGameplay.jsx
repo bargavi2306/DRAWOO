@@ -7,7 +7,6 @@ import Canvas from '../../components/Canvas';
 import DrawingToolbar from '../../components/DrawingToolbar';
 import Chat from '../../components/Chat';
 import Leaderboard from '../../components/Leaderboard';
-import LeaveModal from '../../components/LeaveModal';
 import { socketService } from '../../services/socket';
 import { useToast } from '../../components/Toast';
 import styles from './DrawerGameplay.module.css';
@@ -29,7 +28,6 @@ export default function DrawerGameplay({
   const [activeTool, setActiveTool] = useState('brush');
   const [activeColor, setActiveColor] = useState('#3D3A5C');
   const [activeSize, setActiveSize] = useState(8);
-  const [leaveModalOpen, setLeaveModalOpen] = useState(false);
 
   const canvasRef = useRef(null);
 
@@ -79,7 +77,7 @@ export default function DrawerGameplay({
           />
           <button
             className={styles.leaveBtn}
-            onClick={() => setLeaveModalOpen(true)}
+            onClick={onLeaveGame}
             title="Leave game"
           >
             🚪
@@ -135,16 +133,6 @@ export default function DrawerGameplay({
           />
         </aside>
       </main>
-
-      {/* Leave Confirmation Modal */}
-      <LeaveModal
-        isOpen={leaveModalOpen}
-        onStay={() => setLeaveModalOpen(false)}
-        onLeave={() => {
-          setLeaveModalOpen(false);
-          if (onLeaveGame) onLeaveGame();
-        }}
-      />
     </div>
   );
 }

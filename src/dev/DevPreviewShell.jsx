@@ -3,7 +3,6 @@ import Home from '../pages/Home';
 import PrivateLobby from '../pages/PrivateLobby';
 import GamePage from '../pages/Game';
 import GameOverPage from '../pages/GameOver';
-import EdgeCasesPage from '../pages/EdgeCases';
 import Logo from '../components/Logo';
 import ClayButton from '../components/ClayButton';
 import ClayInput from '../components/ClayInput';
@@ -71,12 +70,6 @@ export default function DevPreviewShell({
               onClick={() => setActiveTab('game_over')}
             >
               🏆 Game Over
-            </button>
-            <button
-              className={`${styles.tabBtn} ${activeTab === 'edge_cases' ? styles.activeTab : ''}`}
-              onClick={() => setActiveTab('edge_cases')}
-            >
-              ⚡ Edge Cases
             </button>
             <button
               className={`${styles.tabBtn} ${activeTab === 'showcase' ? styles.activeTab : ''}`}
@@ -164,10 +157,6 @@ export default function DevPreviewShell({
             onPlayAgain={() => setActiveTab('private_lobby')}
             onBackToHome={() => setActiveTab('home')}
           />
-        )}
-
-        {activeTab === 'edge_cases' && (
-          <EdgeCasesPage onBackToHome={() => setActiveTab('home')} />
         )}
 
         {activeTab === 'showcase' && (

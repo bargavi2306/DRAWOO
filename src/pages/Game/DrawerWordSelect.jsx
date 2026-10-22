@@ -3,8 +3,8 @@ import Logo from '../../components/Logo';
 import RoundIndicator from '../../components/RoundIndicator';
 import Timer from '../../components/Timer';
 import ClayCard from '../../components/ClayCard';
-import LeaveModal from '../../components/LeaveModal';
 import { useToast } from '../../components/Toast';
+import { getDifficultyColor } from '../../utils/gameHelpers';
 import { MOCK_WORD_CHOICES } from '../../mocks/wordSelect.mock';
 import styles from './DrawerWordSelect.module.css';
 
@@ -19,7 +19,6 @@ export default function DrawerWordSelect({
 }) {
   const { addToast } = useToast();
   const [selectedWord, setSelectedWord] = useState(null);
-  const [leaveModalOpen, setLeaveModalOpen] = useState(false);
 
   const wordList = (choices && choices.length > 0) ? choices : words;
 
@@ -28,13 +27,6 @@ export default function DrawerWordSelect({
     setSelectedWord(wordItem);
     addToast(`You chose "${wordItem.word}"! 🎨`, '🎉', 'info');
     if (onSelectWord) onSelectWord(wordItem);
-  };
-
-  const getDifficultyColor = (diff) => {
-    const d = String(diff || '').toLowerCase();
-    if (d === 'easy') return '#5BB89A';
-    if (d === 'hard') return '#E84040';
-    return '#F5C842';
   };
 
   return (
@@ -54,7 +46,7 @@ export default function DrawerWordSelect({
           <Timer seconds={timerSeconds} urgentThreshold={5} />
           <button
             className={styles.leaveBtn}
-            onClick={() => setLeaveModalOpen(true)}
+            onClick={onLeaveGame}
             title="Leave game"
           >
             🚪
@@ -99,16 +91,6 @@ export default function DrawerWordSelect({
           </div>
         </ClayCard>
       </main>
-
-      {/* Leave Modal */}
-      <LeaveModal
-        isOpen={leaveModalOpen}
-        onStay={() => setLeaveModalOpen(false)}
-        onLeave={() => {
-          setLeaveModalOpen(false);
-          if (onLeaveGame) onLeaveGame();
-        }}
-      />
     </div>
   );
 }

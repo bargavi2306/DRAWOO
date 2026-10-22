@@ -1,5 +1,6 @@
 import React from 'react';
 import Avatar from '../Avatar';
+import { isCurrentUser } from '../../utils/gameHelpers';
 import styles from './Leaderboard.module.css';
 
 export default function Leaderboard({
@@ -28,7 +29,7 @@ export default function Leaderboard({
       {title && <h3 className={styles.title}>{title}</h3>}
       <div className={styles.playerList}>
         {sortedPlayers.map((player, idx) => {
-          const isYou = player.id === currentUserId || player.isYou;
+          const isYou = isCurrentUser(player, currentUserId);
 
           return (
             <div

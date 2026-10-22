@@ -5,8 +5,10 @@ import DrawerGameplay from './DrawerGameplay';
 import GuesserGameplay from './GuesserGameplay';
 import WordRevealScreen from './WordRevealScreen';
 import TurnResultsScreen from './TurnResultsScreen';
+import LeaveModal from '../../components/LeaveModal';
 import { socketService } from '../../services/socket';
 import { useToast } from '../../components/Toast';
+import { isCurrentDrawer } from '../../utils/gameHelpers';
 import styles from './Game.module.css';
 
 export default function GamePage({
@@ -24,6 +26,7 @@ export default function GamePage({
   const [wordChoices, setWordChoices] = useState(() => socketService.getWordChoices()?.choices || []);
   const [timerSeconds, setTimerSeconds] = useState(() => roomState?.gameState?.timerSeconds || 20);
   const [messages, setMessages] = useState([]);
+  const [leaveModalOpen, setLeaveModalOpen] = useState(false);
 
   const onGameOverRef = useRef(onGameOver);
   useEffect(() => {
@@ -120,14 +123,8 @@ export default function GamePage({
 
   const players = roomState?.players || [];
 
-  // Robust drawer check using stable session ID, socket ID, or user ID
-  const isDrawer = Boolean(
-    gameState.currentDrawerId && (
-      gameState.currentDrawerId === socketId ||
-      gameState.currentDrawerId === sessionId ||
-      (currentUser?.id && gameState.currentDrawerId === currentUser.id)
-    )
-  );
+  // Robust drawer check using centralized helper
+  const isDrawer = isCurrentDrawer(gameState, currentUser?.id, socketId, sessionId);
 
   const drawerPlayer = players.find((p) => p.id === gameState.currentDrawerId) || {
     nickname: 'Player',
@@ -169,7 +166,7 @@ export default function GamePage({
           choices={effectiveWordChoices}
           timerSeconds={timerSeconds}
           onSelectWord={handleSelectWord}
-          onLeaveGame={handleLeaveGame}
+          onLeaveGame={() => setLeaveModalOpen(true)}
         />
       )}
 
@@ -179,7 +176,7 @@ export default function GamePage({
           totalRounds={gameState.totalRounds}
           drawer={{ id: drawerPlayer.id, nickname: drawerPlayer.nickname, name: drawerPlayer.nickname, avatarId: drawerPlayer.avatarId }}
           timerSeconds={timerSeconds}
-          onLeaveGame={handleLeaveGame}
+          onLeaveGame={() => setLeaveModalOpen(true)}
         />
       )}
 
@@ -194,7 +191,7 @@ export default function GamePage({
           messages={messages}
           timerSeconds={timerSeconds}
           currentUserId={socketId}
-          onLeaveGame={handleLeaveGame}
+          onLeaveGame={() => setLeaveModalOpen(true)}
         />
       )}
 
@@ -211,7 +208,7 @@ export default function GamePage({
           timerSeconds={timerSeconds}
           currentUserId={socketId}
           onSendMessage={handleSendMessage}
-          onLeaveGame={handleLeaveGame}
+          onLeaveGame={() => setLeaveModalOpen(true)}
         />
       )}
 
@@ -244,6 +241,17 @@ export default function GamePage({
           <p>Redirecting to Final Results Spotlight…</p>
         </div>
       )}
+
+      {/* Shared Authoritative Leave Modal */}
+      <LeaveModal
+        isOpen={leaveModalOpen}
+        onStay={() => setLeaveModalOpen(false)}
+        onClose={() => setLeaveModalOpen(false)}
+        onLeave={() => {
+          setLeaveModalOpen(false);
+          handleLeaveGame();
+        }}
+      />
     </div>
   );
 }

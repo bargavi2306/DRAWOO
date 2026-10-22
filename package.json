@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "server": "node server/server.js",
-    "test": "node --test tests/engine.test.js tests/testDrawerLeavesWordSelection.mjs tests/test3BugsMultiplayer.mjs && node tests/testRepeatingNotificationFix.mjs",
+    "test": "node --test tests/engine.test.js tests/testDrawerLeavesWordSelection.mjs tests/test3BugsMultiplayer.mjs && node tests/testRepeatingNotificationFix.mjs && node tests/test15PlayersConcurrency.mjs",
     "build": "vite build",
     "preview": "vite preview"
   },

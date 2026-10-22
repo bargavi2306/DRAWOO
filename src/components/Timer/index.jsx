@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { formatTimer } from '../../utils/gameHelpers';
 import styles from './Timer.module.css';
 
 export default function Timer({
@@ -16,18 +17,15 @@ export default function Timer({
     }
   }, [seconds, onExpire]);
 
-  const formatTime = (secs) => {
-    if (format === 'seconds') return `${secs}s`;
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
+  const displayTime = format === 'seconds'
+    ? `${Math.max(0, seconds)}s`
+    : formatTimer(Math.max(0, seconds));
 
   return (
     <div className={`${styles.timerPill} ${isUrgent ? styles.urgent : ''} ${isExpired ? styles.expired : ''}`}>
       <span className={styles.clockIcon}>⏱️</span>
       <span className={styles.timeDisplay}>
-        {formatTime(Math.max(0, seconds))}
+        {displayTime}
       </span>
     </div>
   );

@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Logo from '../../components/Logo';
 import RoundIndicator from '../../components/RoundIndicator';
 import Avatar from '../../components/Avatar';
 import ClayCard from '../../components/ClayCard';
-import LeaveModal from '../../components/LeaveModal';
 import { MOCK_DRAWER_INFO } from '../../mocks/wordSelect.mock';
 import styles from './GuesserWaiting.module.css';
 
@@ -15,7 +14,6 @@ export default function GuesserWaiting({
   onDrawerSelected,
   onLeaveGame
 }) {
-  const [leaveModalOpen, setLeaveModalOpen] = useState(false);
   const drawerName = drawer.nickname || drawer.name || 'Drawer';
 
   return (
@@ -35,7 +33,7 @@ export default function GuesserWaiting({
           <span className={styles.timerPlaceholder}>⏱️ {timerSeconds}s</span>
           <button
             className={styles.leaveBtn}
-            onClick={() => setLeaveModalOpen(true)}
+            onClick={onLeaveGame}
             title="Leave game"
           >
             🚪
@@ -73,16 +71,6 @@ export default function GuesserWaiting({
           </div>
         </ClayCard>
       </main>
-
-      {/* Leave Modal */}
-      <LeaveModal
-        isOpen={leaveModalOpen}
-        onStay={() => setLeaveModalOpen(false)}
-        onLeave={() => {
-          setLeaveModalOpen(false);
-          if (onLeaveGame) onLeaveGame();
-        }}
-      />
     </div>
   );
 }

@@ -177,7 +177,7 @@ export default function EditRulesModal({
             <button
               type="button"
               className={styles.stepBtn}
-              onClick={() => setMaxCapacity(Math.min(15, maxCapacity + 1))}
+              onClick={() => setMaxCapacity(Math.min(25, maxCapacity + 1))}
             >
               +
             </button>

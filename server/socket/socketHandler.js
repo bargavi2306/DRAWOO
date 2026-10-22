@@ -5,7 +5,21 @@
 import { Player } from '../rooms/Player.js';
 
 export function setupSocketHandlers(io, roomManager) {
+  // Global rate limiter map for high player concurrency (prevents CPU starvation from guess spam)
+  const guessRateLimits = new Map();
+
   io.on('connection', (socket) => {
+    // Crash-safe wrapper for all socket listeners
+    const onSafe = (event, handler) => {
+      socket.on(event, (...args) => {
+        try {
+          handler(...args);
+        } catch (err) {
+          console.error(`💥 [SOCKET SAFETY] Handled error in "${event}" from ${socket.id}:`, err?.message || err);
+        }
+      });
+    };
+
     // Helper: broadcast full room state
     const syncRoom = (room) => {
       if (!room) return;
@@ -15,25 +29,19 @@ export function setupSocketHandlers(io, roomManager) {
       room.gameEngine.broadcastRoomState();
     };
 
-    // Helper: build sanitized client-facing room payload
+    // Helper: build sanitized client-facing room payload (reuses authoritative GameEngine builder)
     const buildRoomPayload = (room, playerId) => {
+      if (!room.gameEngine) {
+        room.initEngine(io);
+      }
       const isDrawer = playerId === room.gameState.currentDrawerId;
-      const sanitizedState = room.gameEngine.getSanitizedGameState(isDrawer);
-      return {
-        code: room.code,
-        type: 'private',
-        hostId: room.hostId,
-        capacity: room.capacity,
-        rules: room.rules,
-        gameState: sanitizedState,
-        players: room.gameEngine.getPlayersList()
-      };
+      return room.gameEngine.buildRoomPayload(isDrawer);
     };
 
     /**
      * 1. CREATE PRIVATE ROOM
      */
-    socket.on('create_private_room', ({ nickname, avatarId, rules, sessionId }, callback) => {
+    onSafe('create_private_room', ({ nickname, avatarId, rules, sessionId }, callback) => {
       const playerId = sessionId || socket.id;
       const player = new Player({
         id: playerId,
@@ -59,7 +67,7 @@ export function setupSocketHandlers(io, roomManager) {
     /**
      * 2. JOIN PRIVATE ROOM
      */
-    socket.on('join_room', ({ roomCode, nickname, avatarId, sessionId }, callback) => {
+    onSafe('join_room', ({ roomCode, nickname, avatarId, sessionId }, callback) => {
       const code = (roomCode || '').toUpperCase().trim();
       const room = roomManager.getRoom(code);
 
@@ -146,7 +154,7 @@ export function setupSocketHandlers(io, roomManager) {
     /**
      * 3. RECONNECT TO ROOM
      */
-    socket.on('reconnect_room', ({ roomCode, playerId }, callback) => {
+    onSafe('reconnect_room', ({ roomCode, playerId }, callback) => {
       const code = (roomCode || '').toUpperCase().trim();
       const room = roomManager.getRoom(code);
 
@@ -178,7 +186,7 @@ export function setupSocketHandlers(io, roomManager) {
     /**
      * 4. OBSOLETE PUBLIC MATCHMAKING (Validation guard)
      */
-    socket.on('join_public_match', (_data, callback) => {
+    onSafe('join_public_match', (_data, callback) => {
       if (typeof callback === 'function') {
         callback({
           success: false,
@@ -191,7 +199,7 @@ export function setupSocketHandlers(io, roomManager) {
     /**
      * 5. UPDATE ROOM RULES (Host only)
      */
-    socket.on('update_rules', ({ rules }) => {
+    onSafe('update_rules', ({ rules }) => {
       const room = roomManager.getRoomForPlayer(socket.id);
       if (!room) return;
 
@@ -206,7 +214,7 @@ export function setupSocketHandlers(io, roomManager) {
     /**
      * 6. OBSOLETE ADD BOT (Validation guard)
      */
-    socket.on('add_bot', (callback) => {
+    onSafe('add_bot', (callback) => {
       if (typeof callback === 'function') {
         callback({
           success: false,
@@ -219,7 +227,7 @@ export function setupSocketHandlers(io, roomManager) {
     /**
      * 7. START GAME (Host only)
      */
-    socket.on('start_game', () => {
+    onSafe('start_game', () => {
       const room = roomManager.getRoomForPlayer(socket.id);
       if (!room) return;
 
@@ -240,7 +248,7 @@ export function setupSocketHandlers(io, roomManager) {
     /**
      * 8. DRAWER CHOOSE WORD
      */
-    socket.on('drawer_select_word', ({ wordItem }) => {
+    onSafe('drawer_select_word', ({ wordItem }) => {
       const room = roomManager.getRoomForPlayer(socket.id);
       if (!room || !room.gameEngine) return;
 
@@ -253,9 +261,12 @@ export function setupSocketHandlers(io, roomManager) {
     });
 
     /**
-     * 9. REAL-TIME CANVAS DRAWING SYNC
+     * 9. REAL-TIME CANVAS DRAWING SYNC (Validated for 15+ player concurrency)
      */
-    socket.on('draw_stroke', (strokeData) => {
+    onSafe('draw_stroke', (strokeData) => {
+      if (!strokeData || typeof strokeData !== 'object') return;
+      if (!Array.isArray(strokeData.points) || strokeData.points.length === 0 || strokeData.points.length > 800) return;
+
       const room = roomManager.getRoomForPlayer(socket.id);
       if (!room) return;
 
@@ -267,7 +278,7 @@ export function setupSocketHandlers(io, roomManager) {
       }
     });
 
-    socket.on('clear_canvas', () => {
+    onSafe('clear_canvas', () => {
       const room = roomManager.getRoomForPlayer(socket.id);
       if (!room) return;
 
@@ -280,9 +291,22 @@ export function setupSocketHandlers(io, roomManager) {
     });
 
     /**
-     * 10. SUBMIT GUESS
+     * 10. SUBMIT GUESS (Rate-limited & validated for 15+ player concurrency)
      */
-    socket.on('submit_guess', ({ text }) => {
+    onSafe('submit_guess', ({ text }) => {
+      const now = Date.now();
+      let rate = guessRateLimits.get(socket.id);
+      if (!rate || now > rate.resetAt) {
+        rate = { count: 1, resetAt: now + 1000 };
+        guessRateLimits.set(socket.id, rate);
+      } else {
+        rate.count++;
+        if (rate.count > 8) {
+          // Drop excess guess spam to protect event loop
+          return;
+        }
+      }
+
       const room = roomManager.getRoomForPlayer(socket.id);
       if (!room || !room.gameEngine) return;
 
@@ -290,7 +314,7 @@ export function setupSocketHandlers(io, roomManager) {
       if (!player) return;
 
       const cleanText = String(text || '').trim();
-      if (!cleanText) return;
+      if (!cleanText || cleanText.length > 100) return;
 
       // Authoritative evaluation first BEFORE any broadcast!
       const guessResult = room.gameEngine.submitGuess(player.id, cleanText);
@@ -330,7 +354,7 @@ export function setupSocketHandlers(io, roomManager) {
     /**
      * 11. EXPLICIT LEAVE ROOM (immediate permanent departure)
      */
-    socket.on('leave_room', () => {
+    onSafe('leave_room', () => {
       const room = roomManager.getRoomForPlayer(socket.id);
       if (!room) return;
 
@@ -355,7 +379,9 @@ export function setupSocketHandlers(io, roomManager) {
     /**
      * 12. UNEXPECTED SOCKET DISCONNECT (triggers 30s grace period)
      */
-    socket.on('disconnect', (_reason) => {
+    onSafe('disconnect', (_reason) => {
+      guessRateLimits.delete(socket.id);
+
       const room = roomManager.getRoomForPlayer(socket.id);
       if (!room) return;
 
