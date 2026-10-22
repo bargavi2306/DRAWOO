@@ -72,7 +72,9 @@ export class Room {
   }
 
   addPlayer(player) {
-    if (this.players.has(player.id)) return { success: false, reason: 'already_joined' };
+    if (this.players.has(player.id) || this.getPlayer(player.id) || (player.socketId && this.getPlayer(player.socketId))) {
+      return { success: false, reason: 'already_joined' };
+    }
 
     // Capacity checks (2–15 players)
     if (this.players.size >= this.rules.maxCapacity) {
