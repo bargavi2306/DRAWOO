@@ -28,8 +28,9 @@ export default function PrivateLobby({
     const unsub = socketService.onRoomStateUpdated((data) => {
       setRoomData(data);
 
-      // If game has started on server, transition to gameplay
-      if (data.gameState && data.gameState.status !== 'lobby') {
+      // If active match has started on server, transition to gameplay
+      const activeMatchStatuses = ['word_selecting', 'drawing', 'word_reveal', 'turn_results'];
+      if (data?.gameState?.status && activeMatchStatuses.includes(data.gameState.status)) {
         if (onStartGame) onStartGame();
       }
     });

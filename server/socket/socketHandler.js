@@ -377,7 +377,27 @@ export function setupSocketHandlers(io, roomManager) {
     });
 
     /**
-     * 12. UNEXPECTED SOCKET DISCONNECT (triggers 30s grace period)
+     * 12. RETURN TO LOBBY (Reset match for play again)
+     */
+    onSafe('return_to_lobby', () => {
+      const room = roomManager.getRoomForPlayer(socket.id);
+      if (!room || !room.gameEngine) return;
+
+      const player = room.getPlayer(socket.id);
+      const nick = player ? player.nickname : 'Player';
+
+      room.gameEngine.resetToLobby();
+
+      io.to(room.code).emit('chat_event', {
+        id: Date.now(),
+        type: 'system',
+        event: 'lobby',
+        text: `🔄 ${nick} returned the room to the lobby.`
+      });
+    });
+
+    /**
+     * 13. UNEXPECTED SOCKET DISCONNECT (triggers 30s grace period)
      */
     onSafe('disconnect', (_reason) => {
       guessRateLimits.delete(socket.id);

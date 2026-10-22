@@ -30,11 +30,43 @@ export class GameEngine {
   }
 
   /**
+   * Reset game engine and room state back to private lobby
+   */
+  resetToLobby() {
+    this.clearAllTimers();
+    this.isTransitioning = false;
+    this.room.gameState.status = 'lobby';
+    this.room.gameState.currentDrawerId = null;
+    this.room.gameState.currentWord = null;
+    this.room.gameState.currentWordCategory = null;
+    this.room.gameState.currentWordDifficulty = null;
+    this.room.gameState.wordPattern = null;
+    this.room.gameState.revealedLetters = 0;
+    this.room.gameState.turnEndReason = null;
+    this.room.gameState.winner = null;
+    this.room.gameState.winnerMessage = null;
+    this.room.gameState.currentRound = 1;
+    this.room.gameState.isFinalTurn = false;
+    this.currentWordChoices = null;
+    this.turnGuesserScores.clear();
+
+    for (const player of this.room.players.values()) {
+      player.score = 0;
+      player.turnPoints = 0;
+      player.isGuessed = false;
+      player.isDrawing = false;
+    }
+
+    this.broadcastRoomState();
+  }
+
+  /**
    * Start a new game
    */
   startGame() {
     this.clearAllTimers();
     this.isTransitioning = false;
+    this.room.gameState.status = 'lobby'; // Reset from game_over if needed
 
     // Reset used words for genuinely new game
     this.wordManager.resetUsedWords();

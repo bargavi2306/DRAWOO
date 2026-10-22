@@ -167,6 +167,15 @@ class SocketService {
     }
   }
 
+  returnToLobby() {
+    if (!this.socket) this.init();
+    if (this.currentRoomState?.gameState) {
+      this.currentRoomState.gameState.status = 'lobby';
+    }
+    this.currentWordChoices = null;
+    this.socket.emit('return_to_lobby');
+  }
+
   // Event Subscriptions with cleanup functions and instant cache replay
   onRoomStateUpdated(callback) {
     if (!this.socket) this.init();

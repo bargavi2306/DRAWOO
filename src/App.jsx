@@ -53,6 +53,9 @@ function MainAppContent() {
       if (data?.code) {
         setActiveRoomCode(data.code);
       }
+      if (data?.gameState?.status === 'lobby') {
+        setCurrentScreen((prev) => (prev === 'game_over' ? 'private_lobby' : prev));
+      }
     });
     return () => unsub();
   }, []);
@@ -94,7 +97,8 @@ function MainAppContent() {
   }, []);
 
   const handlePlayAgain = useCallback(() => {
-    addToast('Returning to Private Lobby with room context…', '🏠', 'info');
+    socketService.returnToLobby();
+    addToast('Returning to Private Lobby…', '🏠', 'info');
     setCurrentScreen('private_lobby');
   }, [addToast]);
 
