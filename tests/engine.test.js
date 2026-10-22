@@ -1,12 +1,12 @@
 import { test, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { Room } from '../server/rooms/Room.js';
-import { Player } from '../server/rooms/Player.js';
-import { RoomManager } from '../server/rooms/RoomManager.js';
-import { WordManager, WORD_DICTIONARY } from '../server/game/WordManager.js';
-import { TurnManager } from '../server/game/TurnManager.js';
-import { GameEngine } from '../server/game/GameEngine.js';
+import { Room } from '../backend/rooms/Room.js';
+import { Player } from '../backend/rooms/Player.js';
+import { RoomManager } from '../backend/rooms/RoomManager.js';
+import { WordManager, WORD_DICTIONARY } from '../backend/game/WordManager.js';
+import { TurnManager } from '../backend/game/TurnManager.js';
+import { GameEngine } from '../backend/game/GameEngine.js';
 
 function createMockIO() {
   const events = [];

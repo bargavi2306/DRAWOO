@@ -3,12 +3,17 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
-    "dev": "vite",
-    "server": "node server/server.js",
-    "test": "node --test tests/engine.test.js tests/testDrawerLeavesWordSelection.mjs tests/test3BugsMultiplayer.mjs && node tests/testRepeatingNotificationFix.mjs && node tests/test15PlayersConcurrency.mjs && node tests/testReturnToLobby.mjs",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "vite frontend",
+    "server": "node backend/server.js",
+    "start": "node backend/server.js",
+    "build": "vite build frontend",
+    "preview": "vite preview frontend",
+    "test": "node --test tests/engine.test.js tests/testDrawerLeavesWordSelection.mjs tests/test3BugsMultiplayer.mjs && node tests/testRepeatingNotificationFix.mjs && node tests/test15PlayersConcurrency.mjs && node tests/testReturnToLobby.mjs"
   },
   "dependencies": {
     "cors": "^2.8.6",

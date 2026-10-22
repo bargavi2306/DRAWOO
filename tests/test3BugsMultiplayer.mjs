@@ -1,8 +1,8 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { RoomManager } from '../server/rooms/RoomManager.js';
-import { Player } from '../server/rooms/Player.js';
+import { RoomManager } from '../backend/rooms/RoomManager.js';
+import { Player } from '../backend/rooms/Player.js';
 
 function createMockIO() {
   const events = [];

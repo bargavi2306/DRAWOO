@@ -5,6 +5,7 @@ import { renderToString } from 'react-dom/server';
 
 async function runTests() {
   const server = await createServer({
+    root: 'frontend',
     server: { middlewareMode: true },
     appType: 'custom'
   });
