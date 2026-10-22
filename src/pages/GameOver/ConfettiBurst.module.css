@@ -1,0 +1,123 @@
+.confettiContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  top: 85%;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.leftOrigin {
+  left: 5%;
+  animation: burstLeft var(--dur, 2.4s) cubic-bezier(0.12, 0.8, 0.32, 1) var(--delay, 0s) forwards;
+}
+
+.rightOrigin {
+  right: 5%;
+  animation: burstRight var(--dur, 2.4s) cubic-bezier(0.12, 0.8, 0.32, 1) var(--delay, 0s) forwards;
+}
+
+/* Shapes */
+.rect {
+  width: var(--size, 10px);
+  height: calc(var(--size, 10px) * 1.6);
+  border-radius: 2px;
+  background-color: var(--color, #F5C842);
+}
+
+.circle {
+  width: var(--size, 9px);
+  height: var(--size, 9px);
+  border-radius: 50%;
+  background-color: var(--color, #7C6FCD);
+}
+
+.strip {
+  width: var(--size, 6px);
+  height: calc(var(--size, 6px) * 2.8);
+  border-radius: 3px;
+  background-color: var(--color, #E879A0);
+}
+
+.symbol {
+  font-size: var(--size, 14px);
+  line-height: 1;
+  color: var(--color, #F5C842);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Static decorations for reduced motion */
+.staticDecor {
+  display: none;
+  position: absolute;
+  font-size: 20px;
+  opacity: 0.5;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.static1 { top: 12%; left: 8%; }
+.static2 { top: 16%; right: 10%; }
+.static3 { top: 75%; left: 10%; }
+.static4 { top: 78%; right: 12%; }
+
+@keyframes burstLeft {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.4);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  50% {
+    transform: translate3d(calc(var(--dx) * 0.7), var(--dy), 0) rotate(calc(var(--rot) * 0.5)) scale(var(--scale, 1));
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(var(--dx), calc(var(--dy) + 400px), 0) rotate(var(--rot)) scale(calc(var(--scale, 1) * 0.7));
+    opacity: 0;
+  }
+}
+
+@keyframes burstRight {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.4);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  50% {
+    transform: translate3d(calc(var(--dx) * -0.7), var(--dy), 0) rotate(calc(var(--rot) * -0.5)) scale(var(--scale, 1));
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(calc(var(--dx) * -1), calc(var(--dy) + 400px), 0) rotate(calc(var(--rot) * -1)) scale(calc(var(--scale, 1) * 0.7));
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .particle {
+    display: none !important;
+    animation: none !important;
+  }
+  .staticDecor {
+    display: block;
+  }
+}

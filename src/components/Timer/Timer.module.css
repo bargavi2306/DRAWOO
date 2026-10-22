@@ -1,0 +1,61 @@
+.timerPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--drawo-lavend-lt);
+  border: 2px solid var(--drawo-lavender);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--drawo-font-family);
+  font-size: 16px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-slate);
+  box-shadow: 
+    0 4px 12px rgba(124, 111, 205, 0.2),
+    inset 0 2px 3px rgba(255, 255, 255, 0.8);
+  user-select: none;
+  transition: all var(--drawo-transition-fast);
+}
+
+.clockIcon {
+  font-size: 18px;
+}
+
+.timeDisplay {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+}
+
+/* Urgent state (< 10s) */
+.urgent {
+  background: var(--drawo-pink-lt);
+  border-color: var(--drawo-red);
+  color: var(--drawo-red);
+  box-shadow: 
+    0 4px 16px rgba(232, 64, 64, 0.35),
+    inset 0 2px 3px rgba(255, 255, 255, 0.8);
+  animation: pulse 1s infinite ease-in-out;
+}
+
+.urgent .clockIcon {
+  animation: shake 0.5s infinite ease-in-out;
+}
+
+.expired {
+  background: #FEE2E2;
+  border-color: var(--drawo-red);
+  color: var(--drawo-red);
+  opacity: 0.8;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}

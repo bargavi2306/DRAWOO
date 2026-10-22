@@ -1,0 +1,196 @@
+.lobbyContainer {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 24px 48px 24px;
+  box-sizing: border-box;
+}
+
+/* Top Navigation Bar */
+.topBar {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.backBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(128, 105, 212, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(128, 105, 212, 0.1);
+  transition: transform var(--drawo-transition-fast), background var(--drawo-transition-fast);
+}
+
+.backBtn:hover {
+  transform: scale(1.06);
+  background: var(--drawo-lavend-pale);
+}
+
+.backArrow {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--drawo-slate);
+  line-height: 1;
+  margin-top: -2px;
+}
+
+.centerLogo {
+  display: flex;
+  align-items: center;
+}
+
+.roomCodeBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(128, 105, 212, 0.25);
+  padding: 4px 6px 4px 14px;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(128, 105, 212, 0.1);
+}
+
+.codeLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--drawo-gray-mid);
+}
+
+.codeText {
+  font-family: var(--drawo-font-mono);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--drawo-lavender);
+  letter-spacing: 0.08em;
+}
+
+.copyBtn {
+  background: var(--drawo-lavender);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 999px;
+  font-family: var(--drawo-font-family);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: transform var(--drawo-transition-fast), background var(--drawo-transition-fast);
+}
+
+.copyBtn:hover {
+  background: var(--drawo-lavender-dark);
+  transform: scale(1.04);
+}
+
+/* Main Content */
+.mainContent {
+  width: 100%;
+  max-width: 900px;
+}
+
+.gridColumns {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.playerColumn {
+  width: 100%;
+}
+
+.playersCard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.rulesColumn {
+  width: 100%;
+}
+
+.startArea {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.startGameBtn {
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #8E78DC 0%, #8069D4 100%);
+  color: #FFFFFF;
+  border: none;
+  font-family: var(--drawo-font-family);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 
+    0 6px 18px rgba(128, 105, 212, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6);
+  transition: transform var(--drawo-transition-fast), box-shadow var(--drawo-transition-fast);
+}
+
+.startGameBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 24px rgba(128, 105, 212, 0.45),
+    inset 0 1px 2px rgba(255, 255, 255, 0.7);
+}
+
+.startGameBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.startNotice {
+  font-size: 12px;
+  color: var(--drawo-gray-mid);
+  font-weight: 500;
+}
+
+.waitingNotice {
+  width: 100%;
+  text-align: center;
+  padding: 12px;
+  background: var(--drawo-lavend-pale);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--drawo-slate);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .lobbyContainer {
+    padding: 12px 14px 36px 14px;
+  }
+
+  .gridColumns {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .topBar {
+    margin-bottom: 16px;
+  }
+}

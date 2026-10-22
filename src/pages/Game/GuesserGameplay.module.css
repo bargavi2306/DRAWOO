@@ -1,0 +1,139 @@
+.gameplayPage {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #DFD4F8 0%, #D4C3F0 45%, #C9B5EC 100%);
+  background-attachment: fixed;
+  padding: 12px 20px 24px 20px;
+  box-sizing: border-box;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topBarCenter {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.leaveBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(128, 105, 212, 0.25);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(128, 105, 212, 0.1);
+  transition: transform var(--drawo-transition-fast);
+}
+
+.leaveBtn:hover {
+  transform: scale(1.08);
+}
+
+.wordHeaderSection {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+/* 3-Column Layout */
+.gameGrid {
+  display: grid;
+  grid-template-columns: 220px minmax(400px, 1fr) 290px;
+  gap: 16px;
+  flex: 1;
+  align-items: start;
+}
+
+.leftCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.centerCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.canvasWrapper {
+  height: 480px;
+  width: 100%;
+}
+
+.rightCol {
+  height: 480px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile responsive vertical stack */
+@media (max-width: 900px) {
+  .gameplayPage {
+    padding: 8px 10px 24px 10px;
+  }
+
+  .topBar {
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .wordHeaderSection {
+    margin-bottom: 8px;
+  }
+
+  .gameGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .centerCol {
+    order: 1;
+  }
+
+  .canvasWrapper {
+    height: 340px;
+  }
+
+  .rightCol {
+    order: 2;
+    height: 280px;
+  }
+
+  .leftCol {
+    order: 3;
+  }
+}
+
+@media (max-width: 480px) {
+  .canvasWrapper {
+    height: 280px;
+  }
+}

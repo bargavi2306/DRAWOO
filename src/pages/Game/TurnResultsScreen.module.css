@@ -1,0 +1,267 @@
+.resultsPage {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 20px 40px 20px;
+  box-sizing: border-box;
+}
+
+.topBar {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.centerContainer {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mascotWrap {
+  width: 120px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: -16px;
+  z-index: 2;
+  filter: drop-shadow(0 6px 14px rgba(128, 105, 212, 0.25));
+}
+
+.mascotImg {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.resultsCard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+  padding-top: 28px;
+}
+
+.headerArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--drawo-lavender-deep);
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--drawo-slate);
+}
+
+.wordHighlight {
+  color: var(--drawo-lavender);
+  font-weight: 800;
+}
+
+.tableContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tableHeader {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--drawo-gray-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tableBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.rowGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--drawo-lavend-pale);
+  border-radius: 14px;
+  border: 1px solid rgba(128, 105, 212, 0.1);
+  cursor: pointer;
+  transition: transform var(--drawo-transition-fast), background var(--drawo-transition-fast);
+}
+
+.row:hover {
+  background: #EFE9FF;
+  transform: translateY(-1px);
+}
+
+.youRow {
+  background: #F3EEFF;
+  border-color: var(--drawo-lavender);
+  box-shadow: 0 2px 8px rgba(128, 105, 212, 0.15);
+}
+
+.rankCol {
+  width: 28px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--drawo-slate);
+}
+
+.playerCol {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.nameGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--drawo-slate);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+
+.youPill {
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--drawo-lavender);
+  color: #FFFFFF;
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+
+.drawerPill {
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--drawo-yellow);
+  color: var(--drawo-slate);
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+
+.turnPtsCol {
+  width: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.turnGain {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--drawo-mint);
+}
+
+.noGain {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--drawo-gray-mid);
+}
+
+.infoToggleIcon {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+.totalPtsCol {
+  width: 54px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--drawo-slate);
+}
+
+.breakdownBox {
+  background: #FFFFFF;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 11px;
+  border: 1px solid rgba(128, 105, 212, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.breakdownTitle {
+  font-weight: 700;
+  color: var(--drawo-lavender);
+}
+
+.breakdownGrid {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.breakdownItem {
+  display: flex;
+  gap: 4px;
+  color: var(--drawo-slate);
+}
+
+.countdownCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--drawo-lavend-pale);
+  padding: 10px 16px;
+  border-radius: 14px;
+  border: 1px dashed rgba(128, 105, 212, 0.3);
+}
+
+.nextText {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--drawo-slate);
+}
+
+.timerPill {
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--drawo-lavender);
+  color: #FFFFFF;
+  padding: 3px 10px;
+  border-radius: 999px;
+}

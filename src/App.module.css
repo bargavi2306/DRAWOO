@@ -1,0 +1,13 @@
+/* Main Real Game App Container */
+.appContainer {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #DFD4F8 0%, #D4C3F0 45%, #C9B5EC 100%);
+  background-attachment: fixed;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}

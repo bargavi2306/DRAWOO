@@ -1,0 +1,28 @@
+.card {
+  position: relative;
+  overflow: hidden;
+}
+
+.lavender {
+  background: var(--drawo-lavend-lt);
+}
+
+.cream {
+  background: var(--drawo-cream);
+}
+
+.peach {
+  background: var(--drawo-peach-lt);
+}
+
+.mint {
+  background: var(--drawo-mint-lt);
+}
+
+.yellow {
+  background: var(--drawo-yellow-lt);
+}
+
+.interactive {
+  cursor: pointer;
+}

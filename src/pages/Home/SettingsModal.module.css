@@ -1,0 +1,77 @@
+.settingsContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--drawo-space-16);
+  padding-top: var(--drawo-space-8);
+}
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #FFFFFF;
+  border-radius: var(--drawo-radius-card);
+  border: 2px solid var(--drawo-lavendLt);
+  box-shadow: 0 4px 12px rgba(124, 111, 205, 0.08);
+}
+
+.labelGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon {
+  font-size: 24px;
+}
+
+.settingTitle {
+  display: block;
+  font-size: 15px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-slate);
+}
+
+.settingDesc {
+  display: block;
+  font-size: 12px;
+  color: var(--drawo-grayMid);
+}
+
+.toggleSwitch {
+  width: 52px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--drawo-grayLt);
+  border: 2px solid var(--drawo-grayMid);
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: background var(--drawo-transition-fast), border-color var(--drawo-transition-fast);
+}
+
+.toggleOn {
+  background: var(--drawo-mint);
+  border-color: var(--drawo-mint);
+}
+
+.toggleKnob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform var(--drawo-transition-fast);
+}
+
+.toggleOn .toggleKnob {
+  transform: translateX(22px);
+}
+
+.footerAction {
+  margin-top: var(--drawo-space-12);
+}

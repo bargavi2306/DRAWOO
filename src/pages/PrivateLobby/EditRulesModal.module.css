@@ -1,0 +1,210 @@
+.rulesForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--drawo-space-16);
+  padding-top: var(--drawo-space-8);
+}
+
+.fieldRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #FFFFFF;
+  border-radius: var(--drawo-radius-card);
+  border: 2px solid var(--drawo-lavendLt);
+}
+
+.fieldLabelGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon {
+  font-size: 20px;
+}
+
+.fieldTitle {
+  font-size: 14px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-slate);
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--drawo-lavendLt);
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.stepBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid var(--drawo-lavender);
+  color: var(--drawo-lavender);
+  font-size: 18px;
+  font-weight: var(--drawo-weight-bold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--drawo-transition-fast);
+}
+
+.stepBtn:hover {
+  transform: scale(1.1);
+  background: var(--drawo-lavender);
+  color: #FFFFFF;
+}
+
+.stepVal {
+  font-size: 14px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-slate);
+  min-width: 48px;
+  text-align: center;
+}
+
+.selectInput {
+  font-family: var(--drawo-font-family);
+  font-size: 14px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-slate);
+  background: #FFFFFF;
+  border: 2px solid var(--drawo-lavendLt);
+  padding: 6px 12px;
+  border-radius: var(--drawo-radius-input);
+  outline: none;
+  cursor: pointer;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #FFFFFF;
+  border-radius: var(--drawo-radius-card);
+  border: 2px solid var(--drawo-lavendLt);
+}
+
+.toggleSwitch {
+  width: 48px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--drawo-grayLt);
+  border: 2px solid var(--drawo-grayMid);
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: background var(--drawo-transition-fast), border-color var(--drawo-transition-fast);
+}
+
+.toggleOn {
+  background: var(--drawo-mint);
+  border-color: var(--drawo-mint);
+}
+
+.toggleKnob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform var(--drawo-transition-fast);
+}
+
+.toggleOn .toggleKnob {
+  transform: translateX(22px);
+}
+
+/* Custom Words Panel */
+.customWordsPanel {
+  background: var(--drawo-peachLt);
+  border: 2px solid var(--drawo-peach);
+  border-radius: var(--drawo-radius-card);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panelTitle {
+  font-size: 13px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-slate);
+}
+
+.panelCount {
+  font-size: 12px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-peach);
+}
+
+.addWordRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chipsWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.wordChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FFFFFF;
+  border: 1px solid var(--drawo-peach);
+  color: var(--drawo-slate);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: var(--drawo-weight-bold);
+}
+
+.removeChipBtn {
+  background: none;
+  border: none;
+  color: var(--drawo-red);
+  font-size: 14px;
+  font-weight: var(--drawo-weight-bold);
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.footerActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: var(--drawo-space-12);
+}
+.wordWarning {
+  font-size: 12px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-red);
+  background: #FEE2E2;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--drawo-red);
+}

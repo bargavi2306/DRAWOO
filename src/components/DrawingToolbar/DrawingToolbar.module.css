@@ -1,0 +1,162 @@
+.toolbarCard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #FFFFFF;
+  border-radius: var(--drawo-radius-card);
+  padding: 10px 16px;
+  border: 1.5px solid rgba(128, 105, 212, 0.18);
+  box-shadow: 
+    0 4px 16px rgba(128, 105, 212, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  user-select: none;
+  box-sizing: border-box;
+}
+
+/* Row 1: Swatches */
+.paletteRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.colorSwatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  outline: none;
+  transition: transform var(--drawo-transition-fast), box-shadow var(--drawo-transition-fast);
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.colorSwatch:hover {
+  transform: scale(1.15);
+}
+
+.activeSwatch {
+  transform: scale(1.22);
+  box-shadow: 
+    0 0 0 2.5px var(--drawo-lavender),
+    0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Row 2: Controls */
+.controlsRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.toolGroup, .actionGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolBtn, .actionBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(128, 105, 212, 0.25);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(128, 105, 212, 0.1);
+  transition: transform var(--drawo-transition-fast), background var(--drawo-transition-fast);
+  box-sizing: border-box;
+}
+
+.toolBtn:hover, .actionBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(128, 105, 212, 0.2);
+}
+
+.activeTool {
+  background: var(--drawo-lavender);
+  border-color: var(--drawo-lavender);
+  color: #FFFFFF;
+  box-shadow: 
+    0 4px 12px rgba(128, 105, 212, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  transform: scale(1.06);
+}
+
+.clearBtn:hover {
+  background: var(--drawo-pink-lt);
+  border-color: var(--drawo-pink);
+}
+
+.divider {
+  width: 1.5px;
+  height: 24px;
+  background: rgba(128, 105, 212, 0.2);
+  border-radius: 999px;
+}
+
+.sizeGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sizeBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(128, 105, 212, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--drawo-transition-fast);
+}
+
+.sizeBtn:hover {
+  transform: scale(1.1);
+}
+
+.activeSize {
+  border-color: var(--drawo-lavender);
+  box-shadow: 0 0 0 2px var(--drawo-lavender);
+  background: var(--drawo-lavend-pale);
+}
+
+.sizeDot {
+  border-radius: 50%;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .toolbarCard {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .colorSwatch {
+    width: 22px;
+    height: 22px;
+  }
+
+  .toolBtn, .actionBtn {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .sizeBtn {
+    width: 28px;
+    height: 28px;
+  }
+}

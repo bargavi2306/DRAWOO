@@ -1,0 +1,126 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(61, 58, 92, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
+  padding: var(--drawo-space-16);
+  animation: fadeIn 250ms ease-out;
+}
+
+.container {
+  width: 100%;
+  max-width: 440px;
+}
+
+.overlayCard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--drawo-space-16);
+  padding: var(--drawo-space-32);
+  box-shadow: 
+    0 16px 48px rgba(124, 111, 205, 0.35),
+    inset 0 2px 4px rgba(255, 255, 255, 1);
+  box-sizing: border-box;
+}
+
+.signalSpotlight {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--drawo-peachLt);
+  border: 3px solid var(--drawo-peach);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(244, 149, 106, 0.3);
+}
+
+.radarIcon {
+  font-size: 36px;
+  z-index: 2;
+  animation: pulseSignal 1.5s infinite ease-in-out;
+}
+
+.wave1, .wave2 {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--drawo-peach);
+  opacity: 0;
+}
+
+.wave1 {
+  width: 100%;
+  height: 100%;
+  animation: radarWave 2s infinite ease-out 0s;
+}
+
+.wave2 {
+  width: 100%;
+  height: 100%;
+  animation: radarWave 2s infinite ease-out 0.8s;
+}
+
+.headline {
+  font-size: var(--drawo-font-h1);
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-peach);
+}
+
+.bodyText {
+  font-size: var(--drawo-font-body);
+  color: var(--drawo-slate);
+}
+
+.loadingDotsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--drawo-peach);
+  animation: dotPulse 1.2s infinite ease-in-out both;
+}
+
+.dot:nth-child(1) { animation-delay: 0s; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+
+.actionRow {
+  margin-top: var(--drawo-space-8);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulseSignal {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes radarWave {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes dotPulse {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1.2); opacity: 1; }
+}

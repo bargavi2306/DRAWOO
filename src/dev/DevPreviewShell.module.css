@@ -1,0 +1,210 @@
+.devContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--drawo-cream);
+  padding-bottom: var(--drawo-space-64);
+}
+
+.topHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: rgba(255, 248, 240, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 2px solid rgba(124, 111, 205, 0.15);
+  box-shadow: 0 4px 16px rgba(124, 111, 205, 0.08);
+}
+
+.logoWrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.phaseTag {
+  font-size: 13px;
+  font-weight: var(--drawo-weight-bold);
+  background: var(--drawo-lavend-lt);
+  color: var(--drawo-lavender);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(124, 111, 205, 0.2);
+}
+
+.navGroup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tabButtons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tabBtn {
+  font-family: var(--drawo-font-family);
+  font-size: 12px;
+  font-weight: var(--drawo-weight-bold);
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--drawo-lavend-lt);
+  background: #FFFFFF;
+  color: var(--drawo-slate);
+  cursor: pointer;
+  transition: all var(--drawo-transition-fast);
+}
+
+.tabBtn:hover {
+  background: var(--drawo-lavend-lt);
+}
+
+.activeTab {
+  background: var(--drawo-lavender);
+  color: #FFFFFF;
+  border-color: var(--drawo-lavender);
+}
+
+.viewportSelector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.viewLabel {
+  font-size: 12px;
+  font-weight: var(--drawo-weight-semibold);
+  color: var(--drawo-gray-mid);
+}
+
+.viewBtn {
+  font-family: var(--drawo-font-family);
+  font-size: 12px;
+  font-weight: var(--drawo-weight-bold);
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--drawo-lavend-lt);
+  background: #FFFFFF;
+  color: var(--drawo-slate);
+  cursor: pointer;
+  transition: all var(--drawo-transition-fast);
+}
+
+.viewBtn:hover {
+  background: var(--drawo-lavend-lt);
+}
+
+.activeView {
+  background: var(--drawo-lavender);
+  color: #FFFFFF;
+  border-color: var(--drawo-lavender);
+}
+
+.stageOuter {
+  width: 100%;
+  margin: var(--drawo-space-24) auto 0 auto;
+  transition: max-width var(--drawo-transition-normal);
+  padding: 0 var(--drawo-space-16);
+  box-sizing: border-box;
+}
+
+.mainGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--drawo-space-24);
+}
+
+.sectionCard {
+  background: #FFFFFF;
+  border-radius: var(--drawo-radius-card);
+  padding: var(--drawo-space-24);
+  border: 2px solid var(--drawo-lavend-lt);
+  box-shadow: 
+    0 8px 32px rgba(124, 111, 205, 0.12),
+    inset 0 2px 3px rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: var(--drawo-space-16);
+}
+
+.sectionTitle {
+  font-size: var(--drawo-font-h2);
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-lavender);
+  border-bottom: 2px solid var(--drawo-lavend-lt);
+  padding-bottom: var(--drawo-space-8);
+}
+
+.componentBox {
+  display: flex;
+  justify-content: center;
+  padding: var(--drawo-space-24);
+  background: var(--drawo-cream);
+  border-radius: var(--drawo-radius-card);
+}
+
+.buttonsFlex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--drawo-space-12);
+  align-items: center;
+}
+
+.inputsStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--drawo-space-12);
+  max-width: 400px;
+}
+
+.avatarGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--drawo-space-12);
+}
+
+.avatarItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.avatarName {
+  font-size: 12px;
+  font-weight: var(--drawo-weight-medium);
+  color: var(--drawo-gray-mid);
+}
+
+.canvasFrame {
+  height: 340px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .topHeader {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .navGroup {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .viewportSelector {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .avatarGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

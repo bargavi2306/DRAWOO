@@ -1,0 +1,56 @@
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--drawo-space-4);
+  width: 100%;
+}
+
+.inputFieldContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.inputIcon {
+  position: absolute;
+  left: var(--drawo-space-16);
+  color: var(--drawo-gray-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.input {
+  min-height: 48px;
+}
+
+.hasIcon {
+  padding-left: 44px;
+}
+
+.charCount {
+  position: absolute;
+  right: var(--drawo-space-12);
+  font-size: var(--drawo-font-caption);
+  color: var(--drawo-gray-mid);
+  pointer-events: none;
+}
+
+.charCountMax {
+  color: var(--drawo-red);
+  font-weight: var(--drawo-weight-bold);
+}
+
+.errorMessage {
+  font-size: 13px;
+  color: var(--drawo-red);
+  font-weight: var(--drawo-weight-medium);
+  margin-top: 2px;
+  padding-left: 4px;
+}
+
+.disabled {
+  opacity: 0.6;
+}

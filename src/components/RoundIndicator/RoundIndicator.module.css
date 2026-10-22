@@ -1,0 +1,25 @@
+.roundPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--drawo-lavend-lt);
+  border: 2px solid rgba(124, 111, 205, 0.3);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--drawo-font-family);
+  font-size: 15px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-lavender);
+  box-shadow: 
+    0 4px 12px rgba(124, 111, 205, 0.15),
+    inset 0 2px 3px rgba(255, 255, 255, 0.8);
+  user-select: none;
+}
+
+.roundIcon {
+  font-size: 16px;
+}
+
+.roundText {
+  white-space: nowrap;
+}

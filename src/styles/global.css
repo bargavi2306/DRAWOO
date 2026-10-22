@@ -1,0 +1,98 @@
+@import './variables.css';
+@import './clay.css';
+@import './responsive.css';
+
+/* Global Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  font-family: var(--drawo-font-family);
+  background: linear-gradient(180deg, #DFD4F8 0%, #D4C3F0 45%, #C9B5EC 100%);
+  background-attachment: fixed;
+  color: var(--drawo-slate);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Global Typography Roles */
+.drawo-display {
+  font-size: var(--drawo-font-display);
+  font-weight: var(--drawo-weight-black);
+  color: var(--drawo-lavender);
+  letter-spacing: -0.02em;
+  text-shadow: 0 4px 12px rgba(128, 105, 212, 0.25);
+}
+
+h1, .drawo-h1 {
+  font-size: var(--drawo-font-h1);
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-lavender-deep);
+}
+
+h2, .drawo-h2 {
+  font-size: var(--drawo-font-h2);
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-slate);
+}
+
+h3, .drawo-h3 {
+  font-size: var(--drawo-font-h3);
+  font-weight: var(--drawo-weight-semibold);
+  color: var(--drawo-lavender);
+}
+
+body, p, .drawo-body {
+  font-size: var(--drawo-font-body);
+  font-weight: var(--drawo-weight-regular);
+  color: var(--drawo-slate);
+}
+
+.drawo-caption {
+  font-size: var(--drawo-font-caption);
+  font-weight: var(--drawo-weight-medium);
+  color: var(--drawo-gray-mid);
+}
+
+.drawo-code {
+  font-family: var(--drawo-font-mono);
+  font-size: var(--drawo-font-code);
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-lavender);
+  letter-spacing: 0.1em;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--drawo-lavend-lt);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--drawo-lavender);
+  border-radius: 999px;
+  border: 2px solid var(--drawo-lavend-lt);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--drawo-lavender-dark);
+}

@@ -1,0 +1,51 @@
+.statusContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  border-radius: var(--drawo-radius-card);
+  user-select: none;
+  box-shadow: 
+    0 4px 14px rgba(124, 111, 205, 0.15),
+    inset 0 2px 3px rgba(255, 255, 255, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.drawerMode {
+  background: linear-gradient(180deg, #FFFDF5 0%, #FFFAE6 100%);
+  border-color: var(--drawo-yellow);
+}
+
+.guesserMode {
+  background: linear-gradient(180deg, #FFFFFF 0%, #EDE9FF 100%);
+  border-color: var(--drawo-lavender);
+}
+
+.badgeLabel {
+  font-size: 13px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-slate);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.wordDisplay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.secretWord {
+  font-size: 20px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-slate);
+  letter-spacing: 0.05em;
+}
+
+.category {
+  font-size: 12px;
+  color: var(--drawo-gray-mid);
+  font-weight: var(--drawo-weight-medium);
+}

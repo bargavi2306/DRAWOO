@@ -1,0 +1,38 @@
+/* Responsive Utilities & Layout Helpers */
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--drawo-space-16);
+  box-sizing: border-box;
+}
+
+/* Touch target verification helper */
+.touch-target {
+  min-width: var(--drawo-touch-min);
+  min-height: var(--drawo-touch-min);
+}
+
+/* Mobile-first Breakpoints */
+
+/* Mobile Small (320px - 480px) */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--drawo-space-12);
+  }
+}
+
+/* Tablet (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .container {
+    padding: 0 var(--drawo-space-24);
+  }
+}
+
+/* Desktop (> 1024px) */
+@media (min-width: 1025px) {
+  .container {
+    padding: 0 var(--drawo-space-32);
+  }
+}

@@ -1,0 +1,142 @@
+.revealPage {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--drawo-cream);
+  padding: var(--drawo-space-16);
+  box-sizing: border-box;
+}
+
+.topBar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: var(--drawo-space-16);
+}
+
+.centerContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.revealCard {
+  width: 100%;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--drawo-space-16);
+  padding: var(--drawo-space-32);
+  animation: popCard 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.iconSpotlight {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--drawo-lavendLt);
+  border: 3px solid var(--drawo-lavender);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(124, 111, 205, 0.25);
+}
+
+.scenarioIcon {
+  font-size: 40px;
+  animation: bounceIcon 1s infinite ease-in-out;
+}
+
+.title {
+  font-size: var(--drawo-font-h1);
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-lavender);
+}
+
+.subtitle {
+  font-size: var(--drawo-font-body);
+  color: var(--drawo-grayMid);
+}
+
+.wordRevealBox {
+  background: linear-gradient(180deg, #FFFFFF 0%, #EDE9FF 100%);
+  border: 3px solid var(--drawo-lavender);
+  border-radius: var(--drawo-radius-card);
+  padding: var(--drawo-space-20) var(--drawo-space-32);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 8px 24px rgba(124, 111, 205, 0.2);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.revealLabel {
+  font-size: 11px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-grayMid);
+  letter-spacing: 0.1em;
+}
+
+.wordRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wordEmoji {
+  font-size: 44px;
+}
+
+.wordText {
+  font-size: 32px;
+  font-weight: var(--drawo-weight-black);
+  color: var(--drawo-slate);
+  letter-spacing: 0.05em;
+}
+
+.categoryBadge {
+  font-size: 12px;
+  font-weight: var(--drawo-weight-bold);
+  background: var(--drawo-lavender);
+  color: #FFFFFF;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.loadingBarTrack {
+  width: 100%;
+  height: 6px;
+  background: var(--drawo-lavendLt);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: var(--drawo-space-8);
+}
+
+.loadingBarFill {
+  height: 100%;
+  background: var(--drawo-lavender);
+  width: 0%;
+  animation: fillProgress 2.2s linear forwards;
+}
+
+@keyframes popCard {
+  from { opacity: 0; transform: scale(0.9) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes bounceIcon {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@keyframes fillProgress {
+  from { width: 0%; }
+  to { width: 100%; }
+}

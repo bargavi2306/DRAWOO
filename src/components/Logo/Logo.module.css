@@ -1,0 +1,86 @@
+.logoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.wordmark {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--drawo-font-family);
+  font-weight: 800;
+  color: var(--drawo-lavender);
+  text-shadow: 
+    0 3px 0px #6350B3,
+    0 6px 14px rgba(128, 105, 212, 0.28);
+  line-height: 1;
+}
+
+.paletteIcon {
+  font-size: 0.9em;
+  transform: rotate(-12deg);
+  display: inline-block;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,0.15));
+}
+
+.title {
+  background: linear-gradient(180deg, #9683E2 0%, #8069D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 3px 0px #5E4CAD);
+  letter-spacing: -0.01em;
+}
+
+.crown {
+  font-size: 0.48em;
+  position: absolute;
+  top: -0.32em;
+  right: -0.38em;
+  transform: rotate(18deg);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.18));
+}
+
+.tagline {
+  font-family: var(--drawo-font-family);
+  color: var(--drawo-pink);
+  font-weight: 700;
+  font-style: italic;
+  margin-top: 4px;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 3px rgba(223, 131, 168, 0.2);
+}
+
+/* Size Variants */
+.sm .wordmark {
+  font-size: 26px;
+}
+.sm .tagline {
+  font-size: 11px;
+}
+
+.md .wordmark {
+  font-size: 40px;
+}
+.md .tagline {
+  font-size: 14px;
+}
+
+.lg .wordmark {
+  font-size: 56px;
+}
+.lg .tagline {
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  .lg .wordmark {
+    font-size: 44px;
+  }
+  .lg .tagline {
+    font-size: 15px;
+  }
+}

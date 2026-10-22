@@ -1,0 +1,93 @@
+/* DRAWO Design System Tokens - Reference UI Matched */
+:root {
+  /* 0.1 Color Palette */
+  --drawo-lavender: #8069D4;
+  --drawo-lavender-dark: #6F59C7;
+  --drawo-lavender-deep: #44366F;
+  --drawo-lavendLt: #EDE5FF;
+  --drawo-lavend-lt: #EDE5FF;
+  --drawo-lavend-pale: #F7F2FF;
+  --drawo-pink: #DF83A8;
+  --drawo-pinkLt: #FFE8F1;
+  --drawo-pink-lt: #FFE8F1;
+  --drawo-peach: #F4956A;
+  --drawo-peachLt: #FFF0E8;
+  --drawo-peach-lt: #FFF0E8;
+  --drawo-cream: #D9CEF5;
+  --drawo-bg-lavender: #D5C7F7;
+  --drawo-bg-gradient: linear-gradient(180deg, #DFD4F8 0%, #D4C3F0 45%, #C9B5EC 100%);
+  --drawo-mint: #4EC995;
+  --drawo-mintLt: #E6FAF2;
+  --drawo-mint-lt: #E6FAF2;
+  --drawo-yellow: #F5C842;
+  --drawo-yellowLt: #FFF9E5;
+  --drawo-yellow-lt: #FFF9E5;
+  --drawo-slate: #3D3166;
+  --drawo-grayMid: #8E8A9F;
+  --drawo-gray-mid: #8E8A9F;
+  --drawo-grayLt: #F4F1FA;
+  --drawo-gray-lt: #F4F1FA;
+  --drawo-red: #E84D4D;
+  --drawo-white: #FFFFFF;
+
+  /* Typography */
+  --drawo-font-family: 'Fredoka', 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --drawo-font-mono: 'Courier New', Courier, monospace;
+
+  /* Font Sizes */
+  --drawo-font-display: 44px;
+  --drawo-font-h1: 30px;
+  --drawo-font-h2: 22px;
+  --drawo-font-h3: 18px;
+  --drawo-font-body: 15px;
+  --drawo-font-caption: 13px;
+  --drawo-font-code: 14px;
+
+  /* Font Weights */
+  --drawo-weight-regular: 400;
+  --drawo-weight-medium: 500;
+  --drawo-weight-semibold: 600;
+  --drawo-weight-bold: 700;
+  --drawo-weight-black: 800;
+
+  /* Spacing Scale (8px base grid) */
+  --drawo-space-4: 4px;
+  --drawo-space-8: 8px;
+  --drawo-space-12: 12px;
+  --drawo-space-16: 16px;
+  --drawo-space-20: 20px;
+  --drawo-space-24: 24px;
+  --drawo-space-32: 32px;
+  --drawo-space-48: 48px;
+  --drawo-space-64: 64px;
+
+  /* Component Tokens */
+  --drawo-radius-card: 20px;
+  --drawo-radius-btn: 999px;
+  --drawo-radius-input: 14px;
+  --drawo-radius-canvas: 18px;
+
+  /* Shadows (Pastel Claymorphism Soft 3D) */
+  --drawo-shadow-card: 0 10px 30px rgba(128, 105, 212, 0.12), 0 2px 8px rgba(128, 105, 212, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  --drawo-shadow-btn-primary: 0 6px 18px rgba(128, 105, 212, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.65);
+  --drawo-shadow-btn-hover: 0 8px 24px rgba(128, 105, 212, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.75);
+
+  /* Touch Target */
+  --drawo-touch-min: 44px;
+
+  /* Transitions */
+  --drawo-transition-fast: 150ms ease;
+  --drawo-transition-normal: 250ms ease;
+  --drawo-transition-bounce: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --drawo-radius-card: 18px;
+    --drawo-font-display: 34px;
+    --drawo-font-h1: 24px;
+    --drawo-font-h2: 19px;
+    --drawo-font-h3: 16px;
+    --drawo-font-body: 14px;
+  }
+}

@@ -1,0 +1,96 @@
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--drawo-space-20);
+  padding-top: var(--drawo-space-8);
+}
+
+.peachBanner {
+  background: var(--drawo-peachLt);
+  border: 2px solid var(--drawo-peach);
+  color: var(--drawo-slate);
+  font-size: 14px;
+  font-weight: var(--drawo-weight-bold);
+  padding: 12px 16px;
+  border-radius: var(--drawo-radius-input);
+  box-shadow: 0 4px 12px rgba(244, 149, 106, 0.15);
+  animation: fadeIn 200ms ease-out;
+}
+
+.redBanner {
+  background: #FEE2E2;
+  border: 2px solid var(--drawo-red);
+  color: var(--drawo-red);
+  font-size: 14px;
+  font-weight: var(--drawo-weight-bold);
+  padding: 12px 16px;
+  border-radius: var(--drawo-radius-input);
+  box-shadow: 0 4px 12px rgba(232, 64, 64, 0.15);
+  animation: fadeIn 200ms ease-out;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--drawo-space-8);
+}
+
+.inputLabel {
+  font-size: 14px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-slate);
+}
+
+.codeInput input {
+  font-family: var(--drawo-font-mono) !important;
+  font-size: 24px !important;
+  letter-spacing: 0.25em !important;
+  text-transform: uppercase !important;
+  text-align: center !important;
+  font-weight: var(--drawo-weight-bold) !important;
+}
+
+.helpText {
+  font-size: 12px;
+  color: var(--drawo-grayMid);
+  text-align: center;
+  margin-top: 4px;
+}
+
+.helpText code {
+  font-family: var(--drawo-font-mono);
+  background: var(--drawo-lavendLt);
+  color: var(--drawo-lavender);
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: var(--drawo-weight-bold);
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--drawo-space-12);
+}
+
+.cancelLink {
+  background: none;
+  border: none;
+  font-family: var(--drawo-font-family);
+  font-size: 14px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-grayMid);
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 999px;
+  transition: color var(--drawo-transition-fast);
+}
+
+.cancelLink:hover {
+  color: var(--drawo-slate);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,101 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(61, 58, 92, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--drawo-space-16);
+  animation: fadeIn 200ms ease-out;
+}
+
+.modalWrapper {
+  width: 100%;
+  animation: popIn 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modalCard {
+  position: relative;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 
+    0 16px 48px rgba(124, 111, 205, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 1);
+}
+
+.header {
+  margin-bottom: var(--drawo-space-16);
+  padding-right: var(--drawo-space-32);
+}
+
+.title {
+  font-size: var(--drawo-font-h1);
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-lavender);
+}
+
+.subtitle {
+  font-size: var(--drawo-font-body);
+  color: var(--drawo-gray-mid);
+  margin-top: var(--drawo-space-4);
+}
+
+.closeBtn {
+  position: absolute;
+  top: var(--drawo-space-16);
+  right: var(--drawo-space-16);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--drawo-lavend-lt);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  color: var(--drawo-slate);
+  font-size: 16px;
+  font-weight: var(--drawo-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--drawo-transition-fast), background var(--drawo-transition-fast);
+}
+
+.closeBtn:hover {
+  transform: scale(1.1);
+  background: var(--drawo-pink-lt);
+  color: var(--drawo-pink);
+}
+
+.body {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.footer {
+  margin-top: var(--drawo-space-24);
+  display: flex;
+  gap: var(--drawo-space-12);
+  justify-content: flex-end;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .modalCard {
+    padding: var(--drawo-space-16);
+  }
+}

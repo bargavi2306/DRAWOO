@@ -1,0 +1,116 @@
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--drawo-space-16);
+  padding-top: var(--drawo-space-4);
+}
+
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionLabel {
+  font-size: 13px;
+  font-weight: var(--drawo-weight-bold);
+  color: var(--drawo-slate);
+}
+
+.avatarGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.pulseGrid {
+  animation: pulseScale 400ms ease-in-out;
+}
+
+.avatarWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 6px 4px;
+  border-radius: 16px;
+  transition: transform var(--drawo-transition-fast), background var(--drawo-transition-fast);
+}
+
+.avatarWrapper:hover {
+  background: var(--drawo-lavend-pale);
+  transform: translateY(-2px);
+}
+
+.selectedAvatar {
+  background: var(--drawo-lavend-pale);
+}
+
+.avatarRel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--drawo-lavender);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: var(--drawo-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 6px rgba(128, 105, 212, 0.4);
+  animation: popBadge 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 2;
+}
+
+.avatarName {
+  font-size: 11px;
+  font-weight: var(--drawo-weight-medium);
+  color: var(--drawo-grayMid);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60px;
+}
+
+.inputSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.submitArea {
+  margin-top: 4px;
+}
+
+@keyframes pulseScale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+@keyframes popBadge {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .avatarGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    max-height: 220px;
+  }
+}

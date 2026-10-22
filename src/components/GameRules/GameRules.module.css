@@ -1,0 +1,87 @@
+.rulesCard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--drawo-slate);
+}
+
+.editBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--drawo-lavend-pale);
+  color: var(--drawo-lavender);
+  border: 1.5px solid rgba(128, 105, 212, 0.25);
+  font-family: var(--drawo-font-family);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform var(--drawo-transition-fast), background var(--drawo-transition-fast);
+}
+
+.editBtn:hover {
+  background: var(--drawo-lavendLt);
+  transform: translateY(-1px);
+}
+
+.rulesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ruleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--drawo-lavend-pale);
+  border-radius: 12px;
+  border: 1px solid rgba(128, 105, 212, 0.1);
+}
+
+.ruleLabel {
+  font-size: 14px;
+  color: var(--drawo-slate);
+  font-weight: 500;
+}
+
+.ruleValue {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--drawo-lavender-deep);
+}
+
+.shareBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(237, 229, 255, 0.5);
+  border: 1px dashed rgba(128, 105, 212, 0.3);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--drawo-slate);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.shareIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
