@@ -17,38 +17,64 @@ const isProduction = process.env.NODE_ENV === 'production';
 const rawOrigin = process.env.CLIENT_ORIGIN || process.env.CORS_ORIGIN;
 
 // CORS configuration: Require explicit origin in production; permissive in development
-let corsOrigin;
+let allowedOrigins;
 if (isProduction) {
   if (!rawOrigin || rawOrigin === '*') {
     console.warn('\n⚠️ [SECURITY WARNING] In production, wildcard CORS is not permitted. Please set CLIENT_ORIGIN to your frontend URL (e.g. https://your-frontend.com).');
-    corsOrigin = false;
+    allowedOrigins = [];
   } else if (rawOrigin.includes(',')) {
-    corsOrigin = rawOrigin.split(',').map(o => o.trim());
+    allowedOrigins = rawOrigin.split(',').map(o => o.trim().replace(/\/+$/, ''));
   } else {
-    corsOrigin = rawOrigin.trim();
+    allowedOrigins = [rawOrigin.trim().replace(/\/+$/, '')];
   }
 } else {
-  // Local development default
-  corsOrigin = rawOrigin
-    ? (rawOrigin.includes(',') ? rawOrigin.split(',').map(o => o.trim()) : rawOrigin.trim())
-    : '*';
+  allowedOrigins = rawOrigin
+    ? (rawOrigin.includes(',') ? rawOrigin.split(',').map(o => o.trim().replace(/\/+$/, '')) : [rawOrigin.trim().replace(/\/+$/, '')])
+    : ['*'];
 }
 
+const checkOrigin = (origin, callback) => {
+  if (!origin) return callback(null, true);
+  if (!isProduction && allowedOrigins.includes('*')) return callback(null, true);
+
+  const clean = origin.replace(/\/+$/, '');
+  const isAllowed = allowedOrigins.some(allowed => {
+    if (allowed === clean || allowed === '*') return true;
+    if (allowed.startsWith('*.')) {
+      try {
+        const u = new URL(clean);
+        return u.hostname.endsWith(allowed.slice(1));
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  });
+
+  // Always allow deployed production frontend and Vercel preview environments
+  if (isAllowed || clean === 'https://drawoo.vercel.app' || clean.endsWith('.vercel.app')) {
+    return callback(null, true);
+  }
+  console.warn(`🔒 [CORS Blocked] Unauthorized origin attempted connection: ${origin}`);
+  return callback(null, false);
+};
+
 app.use(cors({
-  origin: corsOrigin,
+  origin: checkOrigin,
   methods: ['GET', 'POST'],
   credentials: true
 }));
 
 app.use(express.json());
 
-// Initialize Socket.IO server with high-concurrency buffer limits
+// Initialize Socket.IO server with explicit dual transport support
 const io = new Server(httpServer, {
   cors: {
-    origin: corsOrigin,
+    origin: checkOrigin,
     methods: ['GET', 'POST'],
     credentials: true
   },
+  transports: ['websocket', 'polling'],
   maxHttpBufferSize: 1e6, // 1MB payload ceiling prevents memory overload
   pingTimeout: 20000,
   pingInterval: 10000
@@ -78,7 +104,7 @@ httpServer.listen(PORT, () => {
   console.log(`🎨 DRAWO Realtime Server Running!`);
   console.log(`📡 URL: http://localhost:${PORT}`);
   console.log(`🌍 Mode: ${isProduction ? 'Production' : 'Development'}`);
-  console.log(`🔒 CORS Origin: ${corsOrigin}`);
+  console.log(`🔒 Allowed Origins: ${allowedOrigins.join(', ')}`);
   console.log(`=================================`);
 });
 

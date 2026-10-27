@@ -42,6 +42,7 @@ export default function DrawerGameplay({
   const handleUndoCanvas = () => {
     if (canvasRef.current) {
       canvasRef.current.undo();
+      socketService.undoCanvas();
     }
   };
 

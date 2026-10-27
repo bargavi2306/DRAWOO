@@ -107,6 +107,9 @@ export function setupSocketHandlers(io, roomManager) {
         if (typeof callback === 'function') {
           callback({ success: true, roomCode: room.code, playerId, reconnected: true, roomState: roomPayload });
         }
+        if (room.gameState.status === 'drawing' && room.currentTurnStrokes && room.currentTurnStrokes.length > 0) {
+          socket.emit('canvas_history', { strokes: room.currentTurnStrokes });
+        }
         syncRoom(room);
         return;
       }
@@ -140,6 +143,9 @@ export function setupSocketHandlers(io, roomManager) {
       if (typeof callback === 'function') {
         callback({ success: true, roomCode: room.code, playerId: player.id, roomState: roomPayload });
       }
+      if (room.gameState.status === 'drawing' && room.currentTurnStrokes && room.currentTurnStrokes.length > 0) {
+        socket.emit('canvas_history', { strokes: room.currentTurnStrokes });
+      }
 
       io.to(room.code).emit('chat_event', {
         id: Date.now(),
@@ -170,6 +176,9 @@ export function setupSocketHandlers(io, roomManager) {
 
       if (typeof callback === 'function') {
         callback({ success: true, roomCode: room.code, playerId });
+      }
+      if (room.gameState.status === 'drawing' && room.currentTurnStrokes && room.currentTurnStrokes.length > 0) {
+        socket.emit('canvas_history', { strokes: room.currentTurnStrokes });
       }
 
       const player = room.players.get(playerId);
@@ -274,6 +283,11 @@ export function setupSocketHandlers(io, roomManager) {
       const isDrawer = player && room.gameState.currentDrawerId === player.id;
 
       if (isDrawer && room.gameState.status === 'drawing') {
+        if (!room.currentTurnStrokes) room.currentTurnStrokes = [];
+        room.currentTurnStrokes.push(strokeData);
+        if (room.currentTurnStrokes.length > 1000) {
+          room.currentTurnStrokes.shift();
+        }
         socket.to(room.code).emit('draw_stroke_received', strokeData);
       }
     });
@@ -286,7 +300,23 @@ export function setupSocketHandlers(io, roomManager) {
       const isDrawer = player && room.gameState.currentDrawerId === player.id;
 
       if (isDrawer && room.gameState.status === 'drawing') {
+        room.currentTurnStrokes = [];
         socket.to(room.code).emit('clear_canvas_received');
+      }
+    });
+
+    onSafe('undo_canvas', () => {
+      const room = roomManager.getRoomForPlayer(socket.id);
+      if (!room) return;
+
+      const player = room.getPlayer(socket.id);
+      const isDrawer = player && room.gameState.currentDrawerId === player.id;
+
+      if (isDrawer && room.gameState.status === 'drawing') {
+        if (room.currentTurnStrokes && room.currentTurnStrokes.length > 0) {
+          room.currentTurnStrokes.pop();
+        }
+        socket.to(room.code).emit('undo_canvas_received');
       }
     });
 
@@ -315,6 +345,45 @@ export function setupSocketHandlers(io, roomManager) {
 
       const cleanText = String(text || '').trim();
       if (!cleanText || cleanText.length > 100) return;
+
+      const secretWord = room.gameState.currentWord;
+      const cleanSecret = secretWord ? String(secretWord).trim().toLowerCase() : '';
+
+      // Guard: Drawer cannot send chat containing the secret word during drawing
+      if (player.isDrawing && room.gameState.status === 'drawing') {
+        if (cleanSecret && cleanText.toLowerCase().includes(cleanSecret)) {
+          socket.emit('chat_event', {
+            id: Date.now(),
+            type: 'system',
+            event: 'warning',
+            text: "🤫 The drawer cannot reveal the secret word in chat!"
+          });
+          return;
+        }
+      }
+
+      // Guard: Player who already guessed cannot spoil the secret word for others
+      if (player.isGuessed && room.gameState.status === 'drawing') {
+        if (cleanSecret && cleanText.toLowerCase().includes(cleanSecret)) {
+          socket.emit('chat_event', {
+            id: Date.now(),
+            type: 'system',
+            event: 'warning',
+            text: "🤫 Shh! Don't spoil the secret word in chat!"
+          });
+          return;
+        }
+
+        io.to(room.code).emit('chat_message', {
+          id: Date.now(),
+          senderId: player.id,
+          senderName: player.nickname,
+          avatarId: player.avatarId,
+          text: cleanText,
+          alreadyGuessed: true
+        });
+        return;
+      }
 
       // Authoritative evaluation first BEFORE any broadcast!
       const guessResult = room.gameEngine.submitGuess(player.id, cleanText);
@@ -382,6 +451,7 @@ export function setupSocketHandlers(io, roomManager) {
     onSafe('return_to_lobby', () => {
       const room = roomManager.getRoomForPlayer(socket.id);
       if (!room || !room.gameEngine) return;
+      if (room.gameState.status !== 'game_over') return;
 
       const player = room.getPlayer(socket.id);
       const nick = player ? player.nickname : 'Player';

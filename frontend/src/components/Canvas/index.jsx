@@ -1,10 +1,62 @@
 import React, { useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import styles from './Canvas.module.css';
 
+export const LOGICAL_CANVAS_WIDTH = 800;
+export const LOGICAL_CANVAS_HEIGHT = 600;
+
+function toLogicalPoint(p) {
+  if (!p) return { x: 0, y: 0 };
+  // If coordinates are normalized in [0, 1] range:
+  if (p.x >= 0 && p.x <= 1 && p.y >= 0 && p.y <= 1) {
+    return {
+      x: Math.round(p.x * LOGICAL_CANVAS_WIDTH * 10) / 10,
+      y: Math.round(p.y * LOGICAL_CANVAS_HEIGHT * 10) / 10
+    };
+  }
+  return {
+    x: Math.round(p.x * 10) / 10,
+    y: Math.round(p.y * 10) / 10
+  };
+}
+
+function renderStroke(ctx, strokeData) {
+  if (!ctx || !strokeData || !strokeData.points || strokeData.points.length === 0) return;
+  const { points, tool, color, size } = strokeData;
+  const isEraser = tool === 'eraser';
+
+  ctx.beginPath();
+  ctx.strokeStyle = isEraser ? '#FFFFFF' : (color || '#3D3A5C');
+  ctx.lineWidth = isEraser ? (size || 7) * 2.5 : (size || 7);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  const p0 = toLogicalPoint(points[0]);
+  ctx.moveTo(p0.x, p0.y);
+
+  if (points.length === 1) {
+    // Single tap/dot: draw dot to ensure visibility across all browsers
+    ctx.lineTo(p0.x + 0.1, p0.y);
+  } else {
+    for (let i = 1; i < points.length; i++) {
+      const p = toLogicalPoint(points[i]);
+      ctx.lineTo(p.x, p.y);
+    }
+  }
+  ctx.stroke();
+}
+
+function redrawAllStrokes(ctx, strokes) {
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, LOGICAL_CANVAS_WIDTH, LOGICAL_CANVAS_HEIGHT);
+  for (const s of strokes) {
+    renderStroke(ctx, s);
+  }
+}
+
 const Canvas = forwardRef(function Canvas({
   interactive = true,
   color = '#3D3A5C',
-  size = 5, // 3, 5, 10, 16
+  size = 7, // 3, 7, 14, 22
   tool = 'brush', // 'brush' | 'eraser'
   onDrawStroke,
   className = ''
@@ -12,43 +64,39 @@ const Canvas = forwardRef(function Canvas({
   const canvasRef = useRef(null);
   const isDrawingRef = useRef(false);
   const currentPointsRef = useRef([]);
-  const historyRef = useRef([]);
+  const strokesRef = useRef([]);
 
   useImperativeHandle(ref, () => ({
     clear: () => {
+      strokesRef.current = [];
       const canvas = canvasRef.current;
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      historyRef.current = [ctx.getImageData(0, 0, canvas.width, canvas.height)];
+      ctx.fillRect(0, 0, LOGICAL_CANVAS_WIDTH, LOGICAL_CANVAS_HEIGHT);
     },
     undo: () => {
+      if (strokesRef.current.length === 0) return;
+      strokesRef.current.pop();
       const canvas = canvasRef.current;
-      if (!canvas || historyRef.current.length <= 1) return;
-      historyRef.current.pop();
-      const previousState = historyRef.current[historyRef.current.length - 1];
+      if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      ctx.putImageData(previousState, 0, 0);
+      redrawAllStrokes(ctx, strokesRef.current);
     },
     drawRemoteStroke: (strokeData) => {
+      if (!strokeData || !strokeData.points || strokeData.points.length === 0) return;
+      strokesRef.current.push(strokeData);
       const canvas = canvasRef.current;
-      if (!canvas || !strokeData || !strokeData.points || strokeData.points.length === 0) return;
-
+      if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      const { points, tool: remoteTool, color: remoteColor, size: remoteSize } = strokeData;
-
-      ctx.beginPath();
-      ctx.strokeStyle = remoteTool === 'eraser' ? '#FFFFFF' : (remoteColor || '#3D3A5C');
-      ctx.lineWidth = remoteTool === 'eraser' ? remoteSize * 2.5 : (remoteSize || 5);
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-
-      ctx.moveTo(points[0].x, points[0].y);
-      for (let i = 1; i < points.length; i++) {
-        ctx.lineTo(points[i].x, points[i].y);
-      }
-      ctx.stroke();
+      renderStroke(ctx, strokeData);
+    },
+    setStrokesHistory: (strokes) => {
+      strokesRef.current = Array.isArray(strokes) ? [...strokes] : [];
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      redrawAllStrokes(ctx, strokesRef.current);
     }
   }));
 
@@ -56,26 +104,21 @@ const Canvas = forwardRef(function Canvas({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const rect = canvas.parentElement.getBoundingClientRect();
-    const width = Math.max(300, rect.width);
-    const height = Math.max(220, rect.height || width * 0.75);
-
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = LOGICAL_CANVAS_WIDTH;
+    canvas.height = LOGICAL_CANVAS_HEIGHT;
 
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    historyRef.current = [ctx.getImageData(0, 0, canvas.width, canvas.height)];
+    redrawAllStrokes(ctx, strokesRef.current);
   }, []);
 
   const getPos = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
+    if (!rect.width || !rect.height) return { x: 0, y: 0 };
+
+    const scaleX = LOGICAL_CANVAS_WIDTH / rect.width;
+    const scaleY = LOGICAL_CANVAS_HEIGHT / rect.height;
 
     let clientX = e.clientX;
     let clientY = e.clientY;
@@ -85,9 +128,12 @@ const Canvas = forwardRef(function Canvas({
       clientY = e.touches[0].clientY;
     }
 
+    const rawX = (clientX - rect.left) * scaleX;
+    const rawY = (clientY - rect.top) * scaleY;
+
     return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
+      x: Math.round(Math.max(0, Math.min(LOGICAL_CANVAS_WIDTH, rawX)) * 10) / 10,
+      y: Math.round(Math.max(0, Math.min(LOGICAL_CANVAS_HEIGHT, rawY)) * 10) / 10
     };
   };
 
@@ -98,10 +144,13 @@ const Canvas = forwardRef(function Canvas({
     currentPointsRef.current = [pos];
 
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    const isEraser = tool === 'eraser';
     ctx.beginPath();
-    ctx.arc(pos.x, pos.y, (tool === 'eraser' ? size * 2 : size) / 2, 0, Math.PI * 2);
-    ctx.fillStyle = tool === 'eraser' ? '#FFFFFF' : color;
+    ctx.fillStyle = isEraser ? '#FFFFFF' : color;
+    const dotRadius = (isEraser ? size * 2.5 : size) / 2;
+    ctx.arc(pos.x, pos.y, dotRadius, 0, Math.PI * 2);
     ctx.fill();
   };
 
@@ -110,17 +159,15 @@ const Canvas = forwardRef(function Canvas({
     e.preventDefault();
 
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const pos = getPos(e);
-    // Sub-pixel rounding for clean payloads
-    pos.x = Math.round(pos.x * 10) / 10;
-    pos.y = Math.round(pos.y * 10) / 10;
 
     const prevPos = currentPointsRef.current[currentPointsRef.current.length - 1] || pos;
     const dx = pos.x - prevPos.x;
     const dy = pos.y - prevPos.y;
-    // Skip duplicate/redundant points within 1.5px to optimize network bandwidth for 15+ players
-    if (currentPointsRef.current.length > 1 && (dx * dx + dy * dy) < 2.25) {
+    // Skip duplicate/redundant points within 2px to optimize network bandwidth
+    if (currentPointsRef.current.length > 1 && (dx * dx + dy * dy) < 4) {
       return;
     }
 
@@ -130,8 +177,9 @@ const Canvas = forwardRef(function Canvas({
     ctx.moveTo(prevPos.x, prevPos.y);
     ctx.lineTo(pos.x, pos.y);
 
-    ctx.strokeStyle = tool === 'eraser' ? '#FFFFFF' : color;
-    ctx.lineWidth = tool === 'eraser' ? size * 2.5 : size;
+    const isEraser = tool === 'eraser';
+    ctx.strokeStyle = isEraser ? '#FFFFFF' : color;
+    ctx.lineWidth = isEraser ? size * 2.5 : size;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
@@ -142,29 +190,30 @@ const Canvas = forwardRef(function Canvas({
     if (!interactive || !isDrawingRef.current) return;
     isDrawingRef.current = false;
 
-    if (currentPointsRef.current.length > 0 && onDrawStroke) {
-      onDrawStroke({
+    if (currentPointsRef.current.length > 0) {
+      const completedStroke = {
         tool,
         color,
         size,
         points: [...currentPointsRef.current]
-      });
+      };
+
+      strokesRef.current.push(completedStroke);
+
+      if (onDrawStroke) {
+        onDrawStroke(completedStroke);
+      }
     }
 
     currentPointsRef.current = [];
-
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      if (historyRef.current.length >= 20) historyRef.current.shift();
-      historyRef.current.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-    }
   };
 
   return (
     <div className={`${styles.canvasContainer} ${className} ${!interactive ? styles.readOnly : ''}`}>
       <canvas
         ref={canvasRef}
+        width={LOGICAL_CANVAS_WIDTH}
+        height={LOGICAL_CANVAS_HEIGHT}
         className={styles.canvasSurface}
         onMouseDown={startDrawing}
         onMouseMove={draw}

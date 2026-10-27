@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Logo from '../../components/Logo';
 import ClayCard from '../../components/ClayCard';
 import Avatar from '../../components/Avatar';
+import ConnectionBadge from '../../components/ConnectionBadge';
 import PlayerSetupModal from './PlayerSetupModal';
 import JoinRoomModal from './JoinRoomModal';
 import SettingsModal from './SettingsModal';
 import { useToast } from '../../components/Toast';
+import { socketService } from '../../services/socket';
 import styles from './Home.module.css';
 
 export default function Home({
@@ -20,6 +22,16 @@ export default function Home({
   const [joinModalOpen, setJoinModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState(null); // 'private' | 'join'
+  const [connectionStatus, setConnectionStatus] = useState(() => socketService.getConnectionStatus());
+
+  useEffect(() => {
+    // Eagerly connect socket on Home screen so server is warm and ready
+    socketService.init();
+    const unsub = socketService.onConnectionChange((status) => {
+      setConnectionStatus(status);
+    });
+    return () => unsub();
+  }, []);
 
   const handleAction = (actionType) => {
     if (!currentUser || !currentUser.nickname) {
@@ -87,15 +99,18 @@ export default function Home({
           </button>
         )}
 
-        <button
-          type="button"
-          className={styles.settingsGear}
-          onClick={() => setSettingsModalOpen(true)}
-          aria-label="Game Settings"
-          title="Game Settings"
-        >
-          ⚙️
-        </button>
+        <div className={styles.headerRight}>
+          <ConnectionBadge status={connectionStatus} />
+          <button
+            type="button"
+            className={styles.settingsGear}
+            onClick={() => setSettingsModalOpen(true)}
+            aria-label="Game Settings"
+            title="Game Settings"
+          >
+            ⚙️
+          </button>
+        </div>
       </header>
 
       {/* Central Content Column */}

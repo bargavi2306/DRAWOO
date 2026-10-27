@@ -84,9 +84,11 @@ function MainAppContent() {
       if (res.roomState) {
         setRoomData(res.roomState);
       }
+      setCurrentScreen('private_lobby');
+    } else {
+      addToast(res?.message || 'Could not create room. The server may be waking up, please retry.', '⚠️', 'warning');
     }
-    setCurrentScreen('private_lobby');
-  }, [currentUser]);
+  }, [currentUser, addToast]);
 
   const handleJoinRoom = useCallback((code, initialRoomState = null) => {
     setActiveRoomCode(code);

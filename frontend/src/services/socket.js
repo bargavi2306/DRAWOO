@@ -4,6 +4,10 @@ function getSocketUrl() {
   if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SOCKET_URL) {
     return import.meta.env.VITE_SOCKET_URL;
   }
+  // Production fallback for deployed Vercel frontend to reach production backend
+  if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+    return 'https://drawoo.onrender.com';
+  }
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
     return window.location.origin;
   }
@@ -17,6 +21,31 @@ class SocketService {
     this.socket = null;
     this.currentRoomState = null;
     this.currentWordChoices = null;
+    this.connectionStatus = 'disconnected'; // 'disconnected' | 'connecting' | 'connected' | 'reconnecting'
+    this.statusListeners = new Set();
+  }
+
+  notifyStatus(status) {
+    this.connectionStatus = status;
+    for (const listener of this.statusListeners) {
+      try {
+        listener(status);
+      } catch (err) {
+        console.warn('[SocketService] Error in status listener:', err);
+      }
+    }
+  }
+
+  getConnectionStatus() {
+    return this.connectionStatus;
+  }
+
+  onConnectionChange(callback) {
+    this.statusListeners.add(callback);
+    callback(this.connectionStatus);
+    return () => {
+      this.statusListeners.delete(callback);
+    };
   }
 
   getSessionId() {
@@ -34,19 +63,52 @@ class SocketService {
 
   init() {
     if (!this.socket) {
+      this.notifyStatus('connecting');
       this.socket = io(SOCKET_URL, {
         autoConnect: false,
+        transports: ['websocket', 'polling'],
         reconnection: true,
-        reconnectionAttempts: 10,
-        reconnectionDelay: 1000
+        reconnectionAttempts: 30, // 30 attempts covers 60+ seconds for Render cold starts
+        reconnectionDelay: 1500,
+        reconnectionDelayMax: 5000,
+        timeout: 20000
       });
 
       this.socket.on('connect', () => {
-        console.log('[SocketClient] Connected with ID:', this.socket.id);
+        console.log('[SocketClient] Connected with ID:', this.socket.id, 'to:', SOCKET_URL);
+        this.notifyStatus('connected');
+
+        // Automatic room rejoin on socket reconnection
+        if (this.currentRoomState?.code) {
+          const sid = this.getSessionId();
+          this.socket.emit('reconnect_room', { roomCode: this.currentRoomState.code, playerId: sid }, (res) => {
+            if (res && res.success) {
+              console.log('[SocketClient] Auto-resynced session for room:', this.currentRoomState.code);
+            }
+          });
+        }
       });
 
       this.socket.on('disconnect', (reason) => {
         console.log('[SocketClient] Disconnected:', reason);
+        this.notifyStatus('disconnected');
+      });
+
+      this.socket.io.on('reconnect_attempt', (attempt) => {
+        console.log('[SocketClient] Reconnecting attempt:', attempt);
+        this.notifyStatus('reconnecting');
+      });
+
+      this.socket.io.on('reconnect_failed', () => {
+        console.warn('[SocketClient] Reconnect failed. Server may be unreachable.');
+        this.notifyStatus('disconnected');
+      });
+
+      this.socket.on('connect_error', (error) => {
+        console.warn('[SocketClient] Connection error:', error.message);
+        if (this.connectionStatus !== 'reconnecting') {
+          this.notifyStatus('connecting');
+        }
       });
 
       // Maintain latest room state and word choices in memory
@@ -85,41 +147,112 @@ class SocketService {
     return this.currentWordChoices;
   }
 
-  createPrivateRoom(nickname, avatarId, rules = {}, sessionId = null) {
+  createPrivateRoom(nickname, avatarId, rules = {}, sessionId = null, timeoutMs = 20000) {
     this.init();
     const sid = sessionId || this.getSessionId();
     return new Promise((resolve) => {
-      this.socket.emit('create_private_room', { nickname, avatarId, rules, sessionId: sid }, (res) => {
-        if (res && res.roomState) {
-          this.currentRoomState = res.roomState;
+      let finished = false;
+      const timeout = setTimeout(() => {
+        if (!finished) {
+          finished = true;
+          resolve({
+            success: false,
+            reason: 'timeout',
+            message: 'Server connection timed out. The server may be waking up, please wait a moment and try again.'
+          });
         }
-        resolve(res);
-      });
+      }, timeoutMs);
+
+      const doEmit = () => {
+        if (finished) return;
+        this.socket.emit('create_private_room', { nickname, avatarId, rules, sessionId: sid }, (res) => {
+          if (!finished) {
+            finished = true;
+            clearTimeout(timeout);
+            if (res && res.roomState) {
+              this.currentRoomState = res.roomState;
+            }
+            resolve(res);
+          }
+        });
+      };
+
+      if (this.socket.connected) {
+        doEmit();
+      } else {
+        this.socket.once('connect', doEmit);
+      }
     });
   }
 
-  joinPrivateRoom(roomCode, nickname, avatarId, sessionId = null) {
+  joinPrivateRoom(roomCode, nickname, avatarId, sessionId = null, timeoutMs = 20000) {
     this.init();
     const sid = sessionId || this.getSessionId();
     return new Promise((resolve) => {
-      this.socket.emit('join_room', { roomCode, nickname, avatarId, sessionId: sid }, (res) => {
-        if (res && res.roomState) {
-          this.currentRoomState = res.roomState;
+      let finished = false;
+      const timeout = setTimeout(() => {
+        if (!finished) {
+          finished = true;
+          resolve({
+            success: false,
+            reason: 'timeout',
+            message: 'Server connection timed out. The server may be waking up, please wait a moment and try again.'
+          });
         }
-        resolve(res);
-      });
+      }, timeoutMs);
+
+      const doEmit = () => {
+        if (finished) return;
+        this.socket.emit('join_room', { roomCode, nickname, avatarId, sessionId: sid }, (res) => {
+          if (!finished) {
+            finished = true;
+            clearTimeout(timeout);
+            if (res && res.roomState) {
+              this.currentRoomState = res.roomState;
+            }
+            resolve(res);
+          }
+        });
+      };
+
+      if (this.socket.connected) {
+        doEmit();
+      } else {
+        this.socket.once('connect', doEmit);
+      }
     });
   }
 
-  reconnectRoom(roomCode, playerId) {
+  reconnectRoom(roomCode, playerId, timeoutMs = 15000) {
     this.init();
     return new Promise((resolve) => {
-      this.socket.emit('reconnect_room', { roomCode, playerId }, (res) => {
-        if (res && res.roomState) {
-          this.currentRoomState = res.roomState;
+      let finished = false;
+      const timeout = setTimeout(() => {
+        if (!finished) {
+          finished = true;
+          resolve({ success: false, reason: 'timeout' });
         }
-        resolve(res);
-      });
+      }, timeoutMs);
+
+      const doEmit = () => {
+        if (finished) return;
+        this.socket.emit('reconnect_room', { roomCode, playerId }, (res) => {
+          if (!finished) {
+            finished = true;
+            clearTimeout(timeout);
+            if (res && res.roomState) {
+              this.currentRoomState = res.roomState;
+            }
+            resolve(res);
+          }
+        });
+      };
+
+      if (this.socket.connected) {
+        doEmit();
+      } else {
+        this.socket.once('connect', doEmit);
+      }
     });
   }
 
@@ -150,6 +283,12 @@ class SocketService {
   clearCanvas() {
     if (this.socket) {
       this.socket.emit('clear_canvas');
+    }
+  }
+
+  undoCanvas() {
+    if (this.socket) {
+      this.socket.emit('undo_canvas');
     }
   }
 
@@ -220,6 +359,22 @@ class SocketService {
     this.socket.on('clear_canvas_received', callback);
     return () => {
       if (this.socket) this.socket.off('clear_canvas_received', callback);
+    };
+  }
+
+  onUndoCanvasReceived(callback) {
+    if (!this.socket) this.init();
+    this.socket.on('undo_canvas_received', callback);
+    return () => {
+      if (this.socket) this.socket.off('undo_canvas_received', callback);
+    };
+  }
+
+  onCanvasHistory(callback) {
+    if (!this.socket) this.init();
+    this.socket.on('canvas_history', callback);
+    return () => {
+      if (this.socket) this.socket.off('canvas_history', callback);
     };
   }
 

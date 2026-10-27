@@ -18,6 +18,7 @@ export class Room {
     this.capacity = Math.min(15, Math.max(2, Number(capacity) || 8));
     this.players = new Map(); // playerID -> Player instance
     this.createdAt = Date.now();
+    this.currentTurnStrokes = []; // Authoritative stroke history buffer for late-join and reconnect replay
 
     const initialRounds = Math.min(10, Math.max(1, Number(rules.rounds) || 5));
 

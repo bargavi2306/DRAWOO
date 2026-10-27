@@ -49,6 +49,8 @@ export class GameEngine {
     this.room.gameState.isFinalTurn = false;
     this.currentWordChoices = null;
     this.turnGuesserScores.clear();
+    this.room.currentTurnStrokes = [];
+    this.room.currentTurnStrokes = [];
 
     for (const player of this.room.players.values()) {
       player.score = 0;
@@ -70,6 +72,7 @@ export class GameEngine {
 
     // Reset used words for genuinely new game
     this.wordManager.resetUsedWords();
+    this.room.currentTurnStrokes = [];
 
     // Reset scores & flags
     for (const player of this.room.players.values()) {
@@ -148,6 +151,7 @@ export class GameEngine {
     this.room.gameState.revealedLetters = 0;
     this.room.gameState.turnEndReason = null;
     this.turnGuesserScores.clear();
+    this.room.currentTurnStrokes = [];
 
     // Reset turn flags
     for (const player of this.room.players.values()) {
@@ -454,6 +458,7 @@ export class GameEngine {
 
         // 3 & 4. Do not award any points (no guess bonus, no time bonus, no drawer bonus)
         this.turnGuesserScores.clear();
+    this.room.currentTurnStrokes = [];
         for (const player of this.room.players.values()) {
           player.turnPoints = 0;
           player.isGuessed = false;

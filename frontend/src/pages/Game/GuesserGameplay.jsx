@@ -29,7 +29,7 @@ export default function GuesserGameplay({
   const { addToast } = useToast();
   const canvasRef = useRef(null);
 
-  // Subscribe to remote socket drawing strokes & clear commands
+  // Subscribe to remote socket drawing strokes, clear, undo commands & canvas replay
   useEffect(() => {
     const unsubStroke = socketService.onDrawStrokeReceived((strokeData) => {
       if (canvasRef.current && canvasRef.current.drawRemoteStroke) {
@@ -43,9 +43,23 @@ export default function GuesserGameplay({
       }
     });
 
+    const unsubUndo = socketService.onUndoCanvasReceived(() => {
+      if (canvasRef.current && canvasRef.current.undo) {
+        canvasRef.current.undo();
+      }
+    });
+
+    const unsubHistory = socketService.onCanvasHistory((payload) => {
+      if (canvasRef.current && canvasRef.current.setStrokesHistory && payload?.strokes) {
+        canvasRef.current.setStrokesHistory(payload.strokes);
+      }
+    });
+
     return () => {
       unsubStroke();
       unsubClear();
+      unsubUndo();
+      unsubHistory();
     };
   }, []);
 

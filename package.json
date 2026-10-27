@@ -13,7 +13,7 @@
     "start": "node backend/server.js",
     "build": "vite build frontend",
     "preview": "vite preview frontend",
-    "test": "node --test tests/engine.test.js tests/testDrawerLeavesWordSelection.mjs tests/test3BugsMultiplayer.mjs && node tests/testRepeatingNotificationFix.mjs && node tests/test15PlayersConcurrency.mjs && node tests/testReturnToLobby.mjs"
+    "test": "node --test tests/engine.test.js tests/testDrawerLeavesWordSelection.mjs tests/test3BugsMultiplayer.mjs && node tests/testRepeatingNotificationFix.mjs && node tests/test15PlayersConcurrency.mjs && node tests/testReturnToLobby.mjs && node tests/testProductionStabilityPass.mjs"
   },
   "dependencies": {
     "cors": "^2.8.6",

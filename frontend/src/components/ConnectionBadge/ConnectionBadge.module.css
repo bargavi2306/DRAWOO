@@ -1,0 +1,69 @@
+.badgeContainer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: var(--drawo-font-family);
+  font-size: 13px;
+  font-weight: var(--drawo-weight-bold);
+  cursor: default;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.connected {
+  background: var(--drawo-mintLt);
+  border: 1.5px solid rgba(88, 204, 2, 0.35);
+  color: #2F6C15;
+  box-shadow: 0 2px 6px rgba(88, 204, 2, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.connecting,
+.reconnecting {
+  background: #FEF3C7;
+  border: 1.5px solid rgba(245, 158, 11, 0.4);
+  color: #92400E;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.disconnected {
+  background: #FEE2E2;
+  border: 1.5px solid rgba(239, 68, 68, 0.35);
+  color: #991B1B;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.connected .statusDot {
+  background-color: #22C55E;
+  box-shadow: 0 0 6px #22C55E;
+}
+
+.connecting .statusDot,
+.reconnecting .statusDot {
+  background-color: #F59E0B;
+  box-shadow: 0 0 6px #F59E0B;
+  animation: pulseDot 1.2s infinite ease-in-out;
+}
+
+.disconnected .statusDot {
+  background-color: #EF4444;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+}

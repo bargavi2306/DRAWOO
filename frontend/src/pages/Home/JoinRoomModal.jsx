@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../../components/Modal';
 import ClayInput from '../../components/ClayInput';
 import ClayButton from '../../components/ClayButton';
@@ -14,6 +14,14 @@ export default function JoinRoomModal({
   const [code, setCode] = useState('');
   const [status, setStatus] = useState('idle'); // 'idle' | 'joining' | 'invalid_format' | 'not_found' | 'room_full' | 'net_error'
   const [errorMessage, setErrorMessage] = useState('');
+  const [connStatus, setConnStatus] = useState(() => socketService.getConnectionStatus());
+
+  useEffect(() => {
+    if (!isOpen) return;
+    socketService.init();
+    const unsub = socketService.onConnectionChange(setConnStatus);
+    return () => unsub();
+  }, [isOpen]);
 
   const handleCodeChange = (e) => {
     const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -57,7 +65,10 @@ export default function JoinRoomModal({
           setErrorMessage('This room is full and cannot accept new players.');
         } else if (reason === 'not_found') {
           setStatus('not_found');
-          setErrorMessage('Room not found. Check your code and try again.');
+          setErrorMessage(`Room "${trimmed}" not found. Verify the code with your friend.`);
+        } else if (reason === 'timeout') {
+          setStatus('net_error');
+          setErrorMessage(res?.message || 'Server connection timed out. The server may be waking up, please try again.');
         } else {
           setStatus('net_error');
           setErrorMessage(res?.message || 'Could not connect. Check network connection.');
@@ -79,6 +90,18 @@ export default function JoinRoomModal({
     >
       <form onSubmit={handleJoin} className={styles.formContainer}>
         {/* Banner Error States */}
+        {connStatus === 'connecting' && status === 'idle' && (
+          <div className={styles.peachBanner}>
+            ⏳ Waking up game server… please hold on a few seconds.
+          </div>
+        )}
+
+        {connStatus === 'disconnected' && status === 'idle' && (
+          <div className={styles.redBanner}>
+            📡 Server offline. Attempting to reconnect…
+          </div>
+        )}
+
         {status === 'not_found' && (
           <div className={styles.peachBanner}>
             😕 {errorMessage}
